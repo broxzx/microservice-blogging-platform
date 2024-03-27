@@ -1,11 +1,13 @@
 package com.example.security.controller;
 
-import com.example.security.dto.JwtRequest;
+import com.example.security.dto.JwtUserRequest;
+import com.example.security.dto.JwtUserResponse;
 import com.example.security.entity.UserEntity;
 import com.example.security.security.UserDetailsServiceImpl;
 import com.example.security.service.UserService;
 import com.example.security.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,14 +27,8 @@ public class Controller {
 
     private final UserDetailsServiceImpl userDetailsService;
 
-    @GetMapping("/app")
-    public String greetings() {
-        return "hello from authenticated method!";
-    }
-
-
     @PostMapping("/login")
-    public String login(@RequestBody JwtRequest user) {
+    public String login(@RequestBody JwtUserRequest user) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), null));
         } catch (BadCredentialsException e) {
@@ -46,17 +42,24 @@ public class Controller {
     }
 
     @PostMapping("/registration")
-    public void registration(@RequestBody JwtRequest jwtRequest) {
-        service.saveUser(UserEntity.builder()
-                .username(jwtRequest.getUsername())
-                .password(jwtRequest.getPassword())
+    public ResponseEntity<JwtUserResponse> registration(@RequestBody JwtUserRequest jwtUserRequest) {
+        UserEntity savedUser = service.saveUser(UserEntity.builder()
+                .username(jwtUserRequest.getUsername())
+                .password(jwtUserRequest.getPassword())
                 .build());
-//        service.saveUser(new UserEntity(null, jwtRequest.getUsername(), jwtRequest.getPassword(), "user"));
+
+        JwtUserResponse jwtUserResponse = JwtUserResponse.builder()
+                .username(jwtUserRequest.getUsername())
+                .password(jwtUserRequest.getPassword())
+                .build();
+
+        return ResponseEntity.ok(jwtUserResponse);
     }
 
     @GetMapping("/validate")
-    public String validateToken(@RequestParam String token) {
+    public ResponseEntity<String> validateToken(@RequestParam String token) {
         jwtTokenProvider.validate(token);
-        return "token is valid";
+
+        return ResponseEntity.ok("token is valid!");
     }
 }

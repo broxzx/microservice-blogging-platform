@@ -1,13 +1,12 @@
 package com.example.security.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-@Data
-@AllArgsConstructor
 @Builder
-public class JwtRequest {
+@Data
+public class JwtUserResponse {
+
     private String username;
 
     private String password;

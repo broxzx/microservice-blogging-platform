@@ -14,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = repository.findByUsername(username);
+        UserEntity user = userRepository.findByUsername(username);
 
         return User
                 .builder()

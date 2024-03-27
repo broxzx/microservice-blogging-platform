@@ -1,7 +1,8 @@
 package com.example.gatewayservice.filter;
 
+import com.example.gatewayservice.exception.TokenIsAbsent;
+import com.example.gatewayservice.exception.TokenIsNotValid;
 import com.example.gatewayservice.jwtUtils.JwtUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
@@ -10,15 +11,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
 
-    @Autowired
-    private RouteValidator routeValidator;
+    private final RouteValidator routeValidator;
 
-    @Autowired
-    private JwtUtils utils;
+    private final JwtUtils utils;
 
 
-    public AuthenticationFilter() {
+    public AuthenticationFilter(RouteValidator routeValidator, JwtUtils utils) {
         super(Config.class);
+        this.routeValidator = routeValidator;
+        this.utils = utils;
     }
 
     @Override
@@ -27,10 +28,10 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
             if (routeValidator.isSecured.test(exchange.getRequest())) {
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                    throw new RuntimeException("token is missing");
+                    throw new TokenIsAbsent("token is missing");
                 }
 
-                String header = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+                String header =  exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
 
                 if (header != null && header.startsWith("Bearer ")) {
                     header = header.substring(7);
@@ -38,7 +39,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     try {
                         utils.validate(header);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        throw new TokenIsNotValid("token is invalid");
                     }
                 }
             }

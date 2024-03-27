@@ -1,17 +1,15 @@
 #server
 server:
-  port: 8761
+  port: 0
 
 #spring
 spring:
   application:
-    name: eureka-discovery-server
+    name: blog-service
 
-#eureka
+#cloud
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
     service-url:
       defaultZone: http://localhost:8761/eureka
 
@@ -21,6 +19,8 @@ logging:
     root: info
     web: info
     sql: info
+#  pattern:
+#    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
 
 #actuator
 management:

@@ -10,6 +10,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -17,20 +18,17 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class BeanConfiguration {
 
-//    private final JwtPerRequestFilter jwtPerRequestFilter;
-
     private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-//                .addFilterBefore(jwtPerRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/security/login", "/security/registration").permitAll()
-                        .requestMatchers("/security/app/**").hasRole("user"))
+                        .requestMatchers("/security/login", "/security/registration", "security/validate").permitAll())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(((request, response, accessDeniedException) -> response.sendRedirect("/register"))))
+                .logout(LogoutConfigurer::permitAll)
                 .build();
     }
 

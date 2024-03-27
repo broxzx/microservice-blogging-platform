@@ -5,19 +5,30 @@ server:
 spring:
   application:
     name: gateway-service
+  main:
+    web-application-type: reactive
 
   cloud:
     gateway:
-      mvc:
-        discovery:
-          locator:
-            enabled: true
-            lowerCaseServiceId: true
-        routes:
-          - id: security-service
-            uri: lb://security-service
-            predicates:
-              - Path=/security/**
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+      routes:
+        - id: security-service
+          uri: lb://security-service
+          predicates:
+            - Path=/security/**
+        - id: blog-service
+          uri: lb://blog-service
+          predicates:
+            - Path=/blog/**
+          filters:
+            - AuthenticationFilter
+
+
+jwt:
+  token: 7e17e9833023788f29093965b2cc80a73294257ba5f7965edf2ebbd56021bf6d
 
 
 eureka:

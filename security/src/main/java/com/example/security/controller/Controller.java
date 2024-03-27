@@ -39,8 +39,6 @@ public class Controller {
             throw new RuntimeException("wrong password");
         }
 
-        System.out.println(":here");
-
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         String token = jwtTokenProvider.getToken(userDetails);
 
@@ -54,5 +52,11 @@ public class Controller {
                 .password(jwtRequest.getPassword())
                 .build());
 //        service.saveUser(new UserEntity(null, jwtRequest.getUsername(), jwtRequest.getPassword(), "user"));
+    }
+
+    @GetMapping("/validate")
+    public String validateToken(@RequestParam String token) {
+        jwtTokenProvider.validate(token);
+        return "token is valid";
     }
 }

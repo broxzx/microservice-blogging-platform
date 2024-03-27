@@ -1,7 +1,6 @@
 package com.example.security.utils;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,5 +62,13 @@ public class JwtTokenProvider {
     public List<String> getRoles(String token) {
         return getAllClaims(token)
                 .get("roles", List.class);
+    }
+
+    public void validate(String token) {
+        Jwts
+                .parser()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token);
     }
 }

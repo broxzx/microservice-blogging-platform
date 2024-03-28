@@ -1,18 +1,16 @@
-package com.example.security;
+package com.example.entityservice;
 
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(scanBasePackages = {"com.example"})
+@SpringBootApplication
 @EnableDiscoveryClient
-@EnableJpaRepositories(basePackages = {"com.example.security"})
-public class SecurityApplication {
+public class EntityServiceApplication {
 
     public static void main(String... args) {
-        new SpringApplicationBuilder(SecurityApplication.class)
+        new SpringApplicationBuilder(EntityServiceApplication.class)
                 .bannerMode(Banner.Mode.OFF)
                 .run(args);
     }

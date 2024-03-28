@@ -1,4 +1,4 @@
-package com.example.security.entity;
+package com.example.entityservice.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,3 +28,4 @@ public class UserEntity {
         role = "ROLE_user";
     }
 }
+

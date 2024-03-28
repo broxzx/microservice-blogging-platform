@@ -1,6 +1,6 @@
 package com.example.security.security;
 
-import com.example.security.entity.UserEntity;
+import com.example.entityservice.entity.UserEntity;
 import com.example.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;

@@ -1,3 +1,5 @@
+//disabled due to jwt-microservice authentication
+
 //package com.example.security.security;
 //
 //import com.example.security.SecurityApplication;

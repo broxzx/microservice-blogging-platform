@@ -1,8 +1,8 @@
 package com.example.security.controller;
 
+import com.example.entityservice.entity.UserEntity;
 import com.example.security.dto.JwtUserRequest;
 import com.example.security.dto.JwtUserResponse;
-import com.example.security.entity.UserEntity;
 import com.example.security.security.UserDetailsServiceImpl;
 import com.example.security.service.UserService;
 import com.example.security.utils.JwtTokenProvider;

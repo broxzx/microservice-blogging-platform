@@ -1,10 +1,12 @@
 #server
 server:
-  port: 0
+  port: 8761
 
-#cloud
+#eureka
 eureka:
   client:
+    register-with-eureka: false
+    fetch-registry: false
     service-url:
       defaultZone: http://localhost:8761/eureka
 
@@ -14,8 +16,6 @@ logging:
     root: info
     web: info
     sql: info
-#  pattern:
-#    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
 
 #actuator
 management:

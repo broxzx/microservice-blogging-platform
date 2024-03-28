@@ -1,35 +1,6 @@
-#server
-server:
-  port: 8761
-
 #spring
 spring:
   application:
     name: eureka-discovery-server
-
-#eureka
-eureka:
-  client:
-    register-with-eureka: false
-    fetch-registry: false
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
-#logging
-logging:
-  level:
-    root: info
-    web: info
-    sql: info
-
-#actuator
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: always
-    info:
-      enabled: true
+  config:
+    import: "optional:configserver:http://localhost:8888"

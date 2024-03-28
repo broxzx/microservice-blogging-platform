@@ -1,0 +1,55 @@
+#server
+server:
+  port: 8080
+
+#spring
+spring:
+  main:
+    web-application-type: reactive
+  #cloud
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+      routes:
+        - id: security-service
+          uri: lb://security-service
+          predicates:
+            - Path=/security/**
+        - id: blog-service
+          uri: lb://blog-service
+          predicates:
+            - Path=/blog/**
+          filters:
+            - AuthenticationFilter
+
+#jwt-security
+jwt:
+  token: 7e17e9833023788f29093965b2cc80a73294257ba5f7965edf2ebbd56021bf6d
+
+#logging
+logging:
+  level:
+    root: info
+    web: info
+    sql: info
+
+#actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    info:
+      enabled: true
+
+#eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

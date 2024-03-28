@@ -1,6 +1,5 @@
 #spring:
-#  config:
-#    import:
 #  cloud:
 #    config:
-#      uri:
+#      uri: http://localhost:8888
+#      enabled: true

@@ -17,6 +17,15 @@ logging:
 #  pattern:
 #    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
 
+#spring
+spring:
+  #db
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: blog-service
+
 #actuator
 management:
   endpoints:

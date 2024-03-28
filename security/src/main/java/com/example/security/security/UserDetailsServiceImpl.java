@@ -3,6 +3,7 @@ package com.example.security.security;
 import com.example.entityservice.entity.UserEntity;
 import com.example.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
+@Log4j2
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -25,7 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .authorities(user.getRole())
+                .authorities(user.getRole().name())
                 .build();
     }
 }

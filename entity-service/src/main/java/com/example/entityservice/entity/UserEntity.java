@@ -1,5 +1,6 @@
 package com.example.entityservice.entity;
 
+import com.example.entityservice.role.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,21 +12,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
+@Table(name = "users")
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "username", unique = true)
     private String username;
 
+    @Column(name = "password")
     private String password;
 
-    private String role;
+    @Column(name = "role")
+    private Role role;
 
+    //todo: error might occur here
     @PrePersist
     public void init() {
-        role = "ROLE_user";
+        role = Role.USER;
     }
 }
-

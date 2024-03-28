@@ -1,0 +1,35 @@
+#server
+server:
+  port: 0
+
+#spring
+spring:
+  application:
+    name: blog-service
+
+#cloud
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+#logging
+logging:
+  level:
+    root: info
+    web: info
+    sql: info
+#  pattern:
+#    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+
+#actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    info:
+      enabled: true

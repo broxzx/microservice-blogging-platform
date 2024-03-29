@@ -10,9 +10,13 @@ import java.util.List;
 @Builder
 public class BlogResponseDto {
 
+    private Long id;
+
     private String title;
 
     private String description;
+
+    private String ownerId;
 
     private List<MessageEntity> messages;
 }

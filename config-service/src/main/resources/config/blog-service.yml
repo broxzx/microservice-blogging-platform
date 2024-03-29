@@ -32,6 +32,10 @@ spring:
       database: blog-service
       uri: mongodb://localhost/blog-service
 
+#jwt
+jwt:
+  token: 7e17e9833023788f29093965b2cc80a73294257ba5f7965edf2ebbd56021bf6d
+
 #actuator
 management:
   endpoints:

@@ -2,69 +2,110 @@ package com.example.blogservice.controller;
 
 import com.example.blogservice.dto.BlogRequestDto;
 import com.example.blogservice.dto.BlogResponseDto;
-import com.example.blogservice.exception.BlogNotFoundException;
-import com.example.blogservice.repository.BlogRepository;
+import com.example.blogservice.exception.TokenIsInvalidException;
+import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.SequenceGeneratorService;
+import com.example.blogservice.service.UserService;
 import com.example.blogservice.utils.BlogResponseDtoFactory;
 import com.example.entityservice.entity.BlogEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("blog")
 @RequiredArgsConstructor
 public class BlogController {
 
-    private final BlogRepository repository;
-
     private final BlogResponseDtoFactory blogResponseDtoFactory;
 
     private final SequenceGeneratorService sequenceGeneratorService;
 
+    private final BlogService blogService;
+
+    private final UserService userService;
+
+    private static final String SEQUENCE_NAME = "blog_sequence";
     private static final String GET_ALL_BLOGS = "/";
     private static final String GET_BLOG_BY_ID = "/{id}";
     private static final String CREATE_BLOG = "/";
+    private static final String UPDATE_BLOG_BY_ID = "/{id}";
+    private static final String DELETE_BLOG_BY_ID = "/{id}";
 
 
     @GetMapping(GET_ALL_BLOGS)
     public ResponseEntity<List<BlogResponseDto>> getAllBlogs() {
-        List<BlogEntity> blogs = repository.findAll();
+        List<BlogEntity> blogs = blogService.findAll();
 
         List<BlogResponseDto> response = blogs
                 .stream()
                 .map(blogResponseDtoFactory::makeBlogResponseDto)
                 .toList();
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity
+                .ok(response);
     }
 
     @GetMapping(GET_BLOG_BY_ID)
     private ResponseEntity<BlogResponseDto> getBlogById(@PathVariable Long id) {
-        Optional<BlogEntity> foundBlogEntity = repository.findById(id);
+        BlogEntity foundBlogEntity = blogService.findById(id);
 
-        BlogResponseDto response = blogResponseDtoFactory.makeBlogResponseDto(
-                foundBlogEntity.orElseThrow(
-                        () -> new BlogNotFoundException("blog with id '%d' was not found".formatted(id))
-                )
-        );
+        BlogResponseDto response = blogResponseDtoFactory.makeBlogResponseDto(foundBlogEntity);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity
+                .ok(response);
     }
 
     @PostMapping(CREATE_BLOG)
-    public ResponseEntity<String> createBlog(@RequestBody BlogRequestDto blogRequest) {
+    public ResponseEntity<String> createBlog(@RequestBody BlogRequestDto blogRequest, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        } else {
+            throw new TokenIsInvalidException("token was invalid or absent");
+        }
+
+        String userIdByUsername = userService.findUserIdByUsername(token);
+
         BlogEntity createdBlogEntity = BlogEntity.builder()
-                .id(sequenceGeneratorService.generateSequence("blog_sequence"))
+                .id(sequenceGeneratorService.generateSequence(SEQUENCE_NAME))
                 .title(blogRequest.getTitle())
                 .description(blogRequest.getDescription())
+                .ownerId(userIdByUsername)
                 .build();
 
-        repository.save(createdBlogEntity);
+        blogService.save(createdBlogEntity);
 
-        return ResponseEntity.ok("blog with id '%d' was created".formatted(createdBlogEntity.getId()));
+        return ResponseEntity
+                .ok("blog with id '%d' was created".formatted(createdBlogEntity.getId()));
+    }
+
+    @PutMapping(UPDATE_BLOG_BY_ID)
+    public ResponseEntity<BlogResponseDto> updateBlogEntity(@PathVariable Long id, @RequestBody BlogRequestDto blogRequest) {
+        BlogEntity foundBlogEntity = blogService.findById(id);
+
+        blogService.updateBlogEntity(blogRequest, foundBlogEntity);
+
+        blogService.save(foundBlogEntity);
+
+        BlogResponseDto blogResponse = BlogResponseDto.builder()
+                .title(foundBlogEntity.getTitle())
+                .description(foundBlogEntity.getDescription())
+                .messages(foundBlogEntity.getMessages())
+                .build();
+
+        return ResponseEntity
+                .ok(blogResponse);
+    }
+
+    @DeleteMapping(DELETE_BLOG_BY_ID)
+    public ResponseEntity<String> deleteBlogById(@PathVariable Long id) {
+        BlogEntity foundBlog = blogService.findById(id);
+
+        blogService.delete(foundBlog);
+
+        return ResponseEntity.ok("blog with id '%d' was deleted".formatted(id));
     }
 }

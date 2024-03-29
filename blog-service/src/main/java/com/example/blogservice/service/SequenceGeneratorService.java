@@ -18,8 +18,8 @@ public class SequenceGeneratorService {
 
     private final MongoOperations mongoOperations;
 
-    public long generateSequence(String seqName) {
-        DatabaseSequence counter = mongoOperations.findAndModify(query(where("_id").is(seqName)),
+    public long generateSequence(String sequenceName) {
+        DatabaseSequence counter = mongoOperations.findAndModify(query(where("_id").is(sequenceName)),
                 new Update().inc("seq",1), options().returnNew(true).upsert(true),
                 DatabaseSequence.class);
         return !Objects.isNull(counter) ? counter.getSeq() : 1;

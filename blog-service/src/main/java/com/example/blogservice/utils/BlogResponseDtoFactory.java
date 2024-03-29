@@ -9,9 +9,11 @@ public class BlogResponseDtoFactory {
 
     public BlogResponseDto makeBlogResponseDto(BlogEntity blog) {
         return BlogResponseDto.builder()
+                .id(blog.getId())
                 .title(blog.getTitle())
                 .description(blog.getDescription())
                 .messages(blog.getMessages())
+                .ownerId(blog.getOwnerId())
                 .build();
     }
 }

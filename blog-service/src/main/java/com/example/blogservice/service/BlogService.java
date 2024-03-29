@@ -29,13 +29,12 @@ public class BlogService {
         blogRepository.save(blogEntity);
     }
 
-    public void delete(BlogEntity blogEntity) {
-        blogRepository.delete(blogEntity);
-    }
-
     public void updateBlogEntity(BlogRequestDto blogRequest, BlogEntity blogEntity) {
         blogEntity.setTitle(blogRequest.getTitle());
         blogEntity.setDescription(blogRequest.getDescription());
     }
 
+    public void deleteById(Long id) {
+        blogRepository.deleteById(id);
+    }
 }

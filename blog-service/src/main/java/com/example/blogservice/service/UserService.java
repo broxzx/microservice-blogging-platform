@@ -24,4 +24,8 @@ public class UserService {
 
         return String.valueOf(foundUser.getId());
     }
+
+    public String checkTokenValidity(String token) {
+        return jwtTokenUtils.checkTokenValidity(token);
+    }
 }

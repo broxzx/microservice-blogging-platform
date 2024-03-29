@@ -2,7 +2,6 @@ package com.example.blogservice.controller;
 
 import com.example.blogservice.dto.BlogRequestDto;
 import com.example.blogservice.dto.BlogResponseDto;
-import com.example.blogservice.exception.TokenIsInvalidException;
 import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.SequenceGeneratorService;
 import com.example.blogservice.service.UserService;
@@ -13,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -61,11 +61,7 @@ public class BlogController {
 
     @PostMapping(CREATE_BLOG)
     public ResponseEntity<String> createBlog(@RequestBody BlogRequestDto blogRequest, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        } else {
-            throw new TokenIsInvalidException("token was invalid or absent");
-        }
+        token = userService.checkTokenValidity(token);
 
         String userIdByUsername = userService.findUserIdByUsername(token);
 
@@ -74,6 +70,7 @@ public class BlogController {
                 .title(blogRequest.getTitle())
                 .description(blogRequest.getDescription())
                 .ownerId(userIdByUsername)
+                .messages(new ArrayList<>())
                 .build();
 
         blogService.save(createdBlogEntity);
@@ -102,9 +99,9 @@ public class BlogController {
 
     @DeleteMapping(DELETE_BLOG_BY_ID)
     public ResponseEntity<String> deleteBlogById(@PathVariable Long id) {
-        BlogEntity foundBlog = blogService.findById(id);
+        blogService.findById(id);
 
-        blogService.delete(foundBlog);
+        blogService.deleteById(id);
 
         return ResponseEntity.ok("blog with id '%d' was deleted".formatted(id));
     }

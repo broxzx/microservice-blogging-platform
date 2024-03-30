@@ -37,4 +37,8 @@ public class BlogService {
     public void deleteById(Long id) {
         blogRepository.deleteById(id);
     }
+
+    public List<BlogEntity> findBlogEntityByOwnerId(String userId) {
+        return blogRepository.findByOwnerId(userId);
+    }
 }

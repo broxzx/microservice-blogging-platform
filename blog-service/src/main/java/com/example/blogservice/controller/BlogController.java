@@ -61,9 +61,9 @@ public class BlogController {
 
     @PostMapping(CREATE_BLOG)
     public ResponseEntity<String> createBlog(@RequestBody BlogRequestDto blogRequest, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        token = userService.checkTokenValidity(token);
+        token = userService.verifyToken(token);
 
-        String userIdByUsername = userService.findUserIdByUsername(token);
+        String userIdByUsername = userService.findUserIdByJwtToken(token);
 
         BlogEntity createdBlogEntity = BlogEntity.builder()
                 .id(sequenceGeneratorService.generateSequence(SEQUENCE_NAME))

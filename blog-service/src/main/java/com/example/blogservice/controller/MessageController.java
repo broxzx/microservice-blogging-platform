@@ -42,7 +42,8 @@ public class MessageController {
     private static final String DELETE_MESSAGE_BY_ID_IN_BLOG = "/{messageId}";
 
     @GetMapping(GET_ALL_MESSAGES_BY_BLOG_ID)
-    public ResponseEntity<List<MessageResponseDto>> getAllMessageInBlog(@PathVariable Long blogId) {
+    public ResponseEntity<List<MessageResponseDto>> getAllMessagesInBlog(@PathVariable Long blogId) {
+        //check whether blog exists
         blogService.findById(blogId);
 
         List<MessageEntity> messageEntityById = messageService.findMessageEntitiesByBlogId(blogId);
@@ -71,8 +72,8 @@ public class MessageController {
     @PostMapping(CREATE_MESSAGE_IN_BLOG)
     public ResponseEntity<MessageResponseDto> createMessageEntity(@PathVariable Long blogId, @RequestBody MessageRequestDto messageRequest,
                                                                   @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        token = userService.checkTokenValidity(token);
-        String userId = userService.findUserIdByUsername(token);
+        token = userService.verifyToken(token);
+        String userId = userService.findUserIdByJwtToken(token);
 
         BlogEntity foundBlogEntity = blogService.findById(blogId);
 

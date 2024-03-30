@@ -15,7 +15,7 @@ public class UserService {
 
     private final JwtTokenUtils jwtTokenUtils;
 
-    public String findUserIdByUsername(String token) {
+    public String findUserIdByJwtToken(String token) {
         String username = jwtTokenUtils.getUsername(token);
         UserEntity foundUser = userRepository.findByUsername(username)
                 .orElseThrow(
@@ -25,7 +25,18 @@ public class UserService {
         return String.valueOf(foundUser.getId());
     }
 
-    public String checkTokenValidity(String token) {
-        return jwtTokenUtils.checkTokenValidity(token);
+    public String verifyToken(String token) {
+        return jwtTokenUtils.verifyToken(token);
+    }
+
+    public UserEntity findUserEntityByJwtToken(String token) {
+        String username = jwtTokenUtils.getUsername(token);
+
+        UserEntity foundUserEntity = userRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new UserNotFoundException("user with username '%s' was not found".formatted(username))
+                );
+
+        return foundUserEntity;
     }
 }

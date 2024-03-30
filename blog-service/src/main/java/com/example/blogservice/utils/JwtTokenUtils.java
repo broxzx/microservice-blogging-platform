@@ -26,7 +26,7 @@ public class JwtTokenUtils {
                 .getSubject();
     }
 
-    public String checkTokenValidity(String token) {
+    public String verifyToken(String token) {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         } else {

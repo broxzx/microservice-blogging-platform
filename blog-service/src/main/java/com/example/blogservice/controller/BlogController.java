@@ -50,7 +50,7 @@ public class BlogController {
     }
 
     @GetMapping(GET_BLOG_BY_ID)
-    private ResponseEntity<BlogResponseDto> getBlogById(@PathVariable Long id) {
+    public ResponseEntity<BlogResponseDto> getBlogById(@PathVariable Long id) {
         BlogEntity foundBlogEntity = blogService.findById(id);
 
         BlogResponseDto response = blogResponseDtoFactory.makeBlogResponseDto(foundBlogEntity);
@@ -98,11 +98,20 @@ public class BlogController {
     }
 
     @DeleteMapping(DELETE_BLOG_BY_ID)
-    public ResponseEntity<String> deleteBlogById(@PathVariable Long id) {
-        blogService.findById(id);
+    public ResponseEntity<BlogResponseDto> deleteBlogById(@PathVariable Long id) {
+        BlogEntity foundBlogEntity = blogService.findById(id);
 
         blogService.deleteById(id);
 
-        return ResponseEntity.ok("blog with id '%d' was deleted".formatted(id));
+        BlogResponseDto response = BlogResponseDto.builder()
+                .id(foundBlogEntity.getId())
+                .title(foundBlogEntity.getTitle())
+                .description(foundBlogEntity.getDescription())
+                .ownerId(foundBlogEntity.getOwnerId())
+                .messages(foundBlogEntity.getMessages())
+                .build();
+
+        return ResponseEntity
+                .ok(response);
     }
 }

@@ -32,12 +32,13 @@ public class BlogFilterAspect {
     private final UserService userService;
 
 
-    @Around("execution(* com.example.blogservice.controller.BlogController.getAllBlogs()) && @annotation(org.springframework.web.bind.annotation.GetMapping))")
+    @Around("""
+                execution(* com.example.blogservice.controller.BlogController.getAllBlogs()) && @annotation(org.springframework.web.bind.annotation.GetMapping))
+            """)
     public Object filterBlogs(ProceedingJoinPoint joinPoint) throws Throwable {
-        String userId = getUserIdByToken();
         UserEntity userEntity = getUserByToken();
 
-        List<BlogEntity> filteredBlogEntities = blogService.findBlogEntityByOwnerId(userId);
+        List<BlogEntity> filteredBlogEntities = blogService.findBlogEntityByOwnerId(String.valueOf(userEntity.getId()));
 
         ResponseEntity<List<BlogResponseDto>> result = (ResponseEntity<List<BlogResponseDto>>) joinPoint.proceed();
 
@@ -76,7 +77,7 @@ public class BlogFilterAspect {
             BlogResponseDto responseBody = response.getBody();
 
             if (!Objects.equals(responseBody.getOwnerId(), String.valueOf(userEntity.getId()))) {
-                throw new AccessDenied("you don't have an access to this blog");
+                throw new AccessDenied("you don't have access to this blog");
             } else {
                 return response;
             }
@@ -97,25 +98,17 @@ public class BlogFilterAspect {
         BlogEntity foundBlogEntity = blogService.findById(id);
 
         if (!Objects.equals(foundBlogEntity.getOwnerId(), String.valueOf(userEntity.getId())) && (userEntity.getRole() != Role.ADMIN && userEntity.getRole() != Role.MANAGER)) {
-            throw new AccessDenied("you don't have an access to the blog with id %d".formatted(id));
+            throw new AccessDenied("you don't have access to the blog with id %d".formatted(id));
         }
 
         return (ResponseEntity<BlogResponseDto>) joinPoint.proceed();
     }
 
-    public String getUserIdByToken() {
+    private UserEntity getUserByToken() {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        token = userService.verifyToken(token);
 
-        return userService.findUserIdByJwtToken(token);
-    }
-
-    public UserEntity getUserByToken() {
-        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
         token = userService.verifyToken(token);
 
         return userService.findUserEntityByJwtToken(token);

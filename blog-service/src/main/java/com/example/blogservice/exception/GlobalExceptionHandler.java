@@ -44,4 +44,16 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(problemDetail);
     }
+
+    @ExceptionHandler(AccessDenied.class)
+    public ResponseEntity<ProblemDetail> handleAccessDeniedException(AccessDenied accessDenied) {
+        ProblemDetail problemDetail = ProblemDetail
+                .forStatusAndDetail(HttpStatus.FORBIDDEN, "you don't have an access to this method");
+
+        problemDetail.setProperty("errors", accessDenied.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(problemDetail);
+    }
 }

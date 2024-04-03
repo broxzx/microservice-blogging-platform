@@ -1,7 +1,7 @@
 package com.example.blogservice.aop;
 
 import com.example.blogservice.dto.BlogResponseDto;
-import com.example.blogservice.exception.AccessDenied;
+import com.example.blogservice.exception.AccessDeniedException;
 import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.UserService;
 import com.example.entityservice.entity.BlogEntity;
@@ -44,7 +44,7 @@ public class BlogFilterAspect {
 
         if (result.getBody() != null) {
             Role currentUserRole = userEntity.getRole();
-            if (currentUserRole == Role.ADMIN || currentUserRole == Role.MANAGER) {
+            if (currentUserRole == Role.ROLE_ADMIN || currentUserRole == Role.ROLE_MANAGER) {
                 return result;
             } else {
                 List<BlogResponseDto> response = result.getBody()
@@ -70,14 +70,14 @@ public class BlogFilterAspect {
         if (response.getBody() != null) {
             Role currentUserRole = userEntity.getRole();
 
-            if (currentUserRole == Role.ADMIN || currentUserRole == Role.MANAGER) {
+            if (currentUserRole == Role.ROLE_ADMIN || currentUserRole == Role.ROLE_MANAGER) {
                 return response;
             }
 
             BlogResponseDto responseBody = response.getBody();
 
             if (!Objects.equals(responseBody.getOwnerId(), String.valueOf(userEntity.getId()))) {
-                throw new AccessDenied("you don't have access to this blog");
+                throw new AccessDeniedException("you don't have access to this blog");
             } else {
                 return response;
             }
@@ -97,8 +97,8 @@ public class BlogFilterAspect {
 
         BlogEntity foundBlogEntity = blogService.findById(id);
 
-        if (!Objects.equals(foundBlogEntity.getOwnerId(), String.valueOf(userEntity.getId())) && (userEntity.getRole() != Role.ADMIN && userEntity.getRole() != Role.MANAGER)) {
-            throw new AccessDenied("you don't have access to the blog with id %d".formatted(id));
+        if (!Objects.equals(foundBlogEntity.getOwnerId(), String.valueOf(userEntity.getId())) && (userEntity.getRole() != Role.ROLE_ADMIN && userEntity.getRole() != Role.ROLE_MANAGER)) {
+            throw new AccessDeniedException("you don't have access to the blog with id %d".formatted(id));
         }
 
         return (ResponseEntity<BlogResponseDto>) joinPoint.proceed();

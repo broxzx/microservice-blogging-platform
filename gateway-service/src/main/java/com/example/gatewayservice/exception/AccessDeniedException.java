@@ -1,12 +1,12 @@
-package com.example.blogservice.exception;
+package com.example.gatewayservice.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.FORBIDDEN)
-public class AccessDenied extends RuntimeException{
+public class AccessDeniedException extends RuntimeException {
 
-    public AccessDenied(String message) {
+    public AccessDeniedException(String message) {
         super(message);
     }
 }

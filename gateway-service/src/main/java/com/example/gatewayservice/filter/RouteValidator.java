@@ -15,8 +15,17 @@ public class RouteValidator {
             "/security/login"
     );
 
+    private static final List<String> adminPaths = List.of(
+            "/swagger-ui/"
+    );
+
     public Predicate<ServerHttpRequest> isSecured =
             request -> allowedRoutes
                     .stream()
                     .noneMatch(uri -> request.getURI().getPath().contains(uri));
+
+    public Predicate<ServerHttpRequest> isAdminRequest =
+            request -> adminPaths
+                    .stream()
+                    .anyMatch(uri -> request.getURI().getPath().contains(uri));
 }

@@ -1,5 +1,5 @@
 package com.example.entityservice.role;
 
 public enum Role {
-    USER, ADMIN, MANAGER
+    ROLE_USER, ROLE_ADMIN, ROLE_MANAGER
 }

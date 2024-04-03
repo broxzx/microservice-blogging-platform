@@ -27,11 +27,12 @@ public class UserEntity {
     private String password;
 
     @Column(name = "role")
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     //todo: error might occur here
     @PrePersist
     public void init() {
-        role = Role.USER;
+        role = Role.ROLE_USER;
     }
 }

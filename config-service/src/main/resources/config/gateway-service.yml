@@ -21,7 +21,7 @@ spring:
         - id: blog-service
           uri: lb://blog-service
           predicates:
-            - Path=/blog/**
+            - Path=/blog/**, /swagger-ui/index.html
           filters:
             - AuthenticationFilter
 

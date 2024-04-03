@@ -2,7 +2,7 @@ package com.example.blogservice.aop;
 
 import com.example.blogservice.dto.MessageRequestDto;
 import com.example.blogservice.dto.MessageResponseDto;
-import com.example.blogservice.exception.AccessDenied;
+import com.example.blogservice.exception.AccessDeniedException;
 import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.MessageService;
 import com.example.blogservice.service.UserService;
@@ -45,8 +45,8 @@ public class MessageFilterAspect {
 
         String stringUserId = String.valueOf(foundUserEntity.getId());
         if (!Objects.equals(foundMessageEntity.getAuthorId(), stringUserId) && !Objects.equals(foundBlogEntity.getOwnerId(), stringUserId)
-                && (foundUserEntity.getRole() != Role.ADMIN && foundUserEntity.getRole() != Role.MANAGER)) {
-            throw new AccessDenied("you don't have access to this message");
+                && (foundUserEntity.getRole() != Role.ROLE_ADMIN && foundUserEntity.getRole() != Role.ROLE_MANAGER)) {
+            throw new AccessDeniedException("you don't have access to this message");
         }
 
         ResponseEntity<String> response = (ResponseEntity<String>) joinPoint.proceed();
@@ -64,9 +64,9 @@ public class MessageFilterAspect {
 
         String stringUserId = String.valueOf(foundUserEntity.getId());
 
-        if (!Objects.equals(foundMessageEntity.getAuthorId(), stringUserId) && foundUserEntity.getRole() != Role.ADMIN
-                && foundUserEntity.getRole() != Role.MANAGER) {
-            throw new AccessDenied("you are not owner of this message");
+        if (!Objects.equals(foundMessageEntity.getAuthorId(), stringUserId) && foundUserEntity.getRole() != Role.ROLE_ADMIN
+                && foundUserEntity.getRole() != Role.ROLE_MANAGER) {
+            throw new AccessDeniedException("you are not owner of this message");
         }
 
         ResponseEntity<MessageResponseDto> response = (ResponseEntity<MessageResponseDto>) joinPoint.proceed();

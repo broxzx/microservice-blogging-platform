@@ -21,7 +21,11 @@ public class SubscriptionEntity {
     @Id
     private Long id;
 
-    private String userId;
+    private Long userId;
 
-    private String blogId;
+    private String username;
+
+    private Long blogId;
+
+    private String blogName;
 }

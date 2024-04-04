@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface SubscriptionRepository extends MongoRepository<SubscriptionEntity, Long> {
 
-    List<SubscriptionEntity> findByUserId(String userId);
+    List<SubscriptionEntity> findByUserId(Long userId);
 
-    List<SubscriptionEntity> findByBlogId(String blogId);
+    List<SubscriptionEntity> findByBlogId(Long blogId);
 
-    void deleteByUserIdAndBlogId(String userId, String blogId);
+    void deleteByUserIdAndBlogId(Long userId, Long blogId);
 }

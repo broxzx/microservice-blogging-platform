@@ -34,15 +34,15 @@ public class SubscriptionService {
         subscriptionRepository.deleteById(id);
     }
 
-    public List<SubscriptionEntity> findSubscriptionByUserId(String userId) {
+    public List<SubscriptionEntity> findSubscriptionByUserId(Long userId) {
         return subscriptionRepository.findByUserId(userId);
     }
 
-    public void deleteSubscriptionByUserIdAndBlogId(String userId, String blogId) {
+    public void deleteSubscriptionByUserIdAndBlogId(Long userId, Long blogId) {
         subscriptionRepository.deleteByUserIdAndBlogId(userId, blogId);
     }
 
-    public List<SubscriptionEntity> findSubscriptionByBlogId(String blogId) {
+    public List<SubscriptionEntity> findSubscriptionByBlogId(Long blogId) {
         return subscriptionRepository.findByBlogId(blogId);
     }
 }

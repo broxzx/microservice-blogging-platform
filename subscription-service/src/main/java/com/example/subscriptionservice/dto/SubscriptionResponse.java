@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class SubscriptionResponse {
 
-    private String userId;
+    private String username;
 
-    private String blogId;
+    private String blogName;
 }

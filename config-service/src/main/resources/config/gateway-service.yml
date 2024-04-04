@@ -18,10 +18,18 @@ spring:
           uri: lb://security-service
           predicates:
             - Path=/security/**
+
         - id: blog-service
           uri: lb://blog-service
           predicates:
             - Path=/blog/**, /swagger-ui/index.html
+          filters:
+            - AuthenticationFilter
+
+        - id: subscription-service
+          uri: lb://subscription-service
+          predicates:
+            - Path=/subscriptions/**
           filters:
             - AuthenticationFilter
 

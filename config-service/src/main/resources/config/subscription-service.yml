@@ -1,0 +1,44 @@
+#server
+server:
+  port: 0
+
+#mongo
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/security-service
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  data:
+    mongodb:
+      uri: mongodb://localhost/blog-service
+      host: localhost
+      port: 27017
+      username: admin
+      password: password
+      database: blog-service
+
+#eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+#logging
+logging:
+  level:
+    root: info
+    web: info
+    sql: info
+
+#actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    info:
+      enabled: true

@@ -64,8 +64,6 @@ public class SubscriptionController {
                 .username(subscriptionEntity.getUsername())
                 .build();
 
-
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);

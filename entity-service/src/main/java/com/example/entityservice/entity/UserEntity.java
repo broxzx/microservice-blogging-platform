@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,11 +28,16 @@ public class UserEntity {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "email", unique = true)
+    private String email;
+
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    //todo: error might occur here
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<NotificationEntity> notifications;
+
     @PrePersist
     public void init() {
         role = Role.ROLE_USER;

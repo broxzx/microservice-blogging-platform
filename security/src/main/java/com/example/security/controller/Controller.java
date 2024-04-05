@@ -46,11 +46,13 @@ public class Controller {
         UserEntity savedUser = service.saveUser(UserEntity.builder()
                 .username(jwtUserRequest.getUsername())
                 .password(jwtUserRequest.getPassword())
+                .email(jwtUserRequest.getEmail())
                 .build());
 
         JwtUserResponse jwtUserResponse = JwtUserResponse.builder()
                 .username(jwtUserRequest.getUsername())
                 .password(jwtUserRequest.getPassword())
+                .email(jwtUserRequest.getEmail())
                 .build();
 
         return ResponseEntity.ok(jwtUserResponse);

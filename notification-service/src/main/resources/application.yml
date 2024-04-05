@@ -1,1 +1,10 @@
-spring.application.name=notification-service
+spring:
+  application:
+    name: notification-service
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
+rabbitmq:
+  queue: notifications-queue
+  routing-key: notification.push
+  exchange: notification-exchange

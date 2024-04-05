@@ -5,6 +5,8 @@ import com.example.entityservice.entity.SubscriptionEntity;
 import com.example.entityservice.entity.UserEntity;
 import com.example.subscriptionservice.dto.SubscriptionRequest;
 import com.example.subscriptionservice.exception.NotFoundException;
+import com.example.subscriptionservice.model.NotificationModel;
+import com.example.subscriptionservice.producer.RabbitMQNotificationProducer;
 import com.example.subscriptionservice.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class SubscriptionService {
     private final UserService userService;
 
     private final SequenceGeneratorService sequenceGeneratorService;
+
+    private final RabbitMQNotificationProducer rabbitMQNotificationProducer;
 
     private static final String SEQUENCE_NAME = "subscription_sequence";
 
@@ -54,6 +58,14 @@ public class SubscriptionService {
                 .build();
 
         subscriptionRepository.save(builtUser);
+
+        NotificationModel notificationModel = NotificationModel.builder()
+                .username(builtUser.getUsername())
+                .blogTitle(builtUser.getBlogName())
+                .email(foundUserEntity.getEmail())
+                .build();
+
+        rabbitMQNotificationProducer.sendNotification(notificationModel);
 
         return builtUser;
     }

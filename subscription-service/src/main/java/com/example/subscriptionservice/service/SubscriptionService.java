@@ -1,7 +1,10 @@
 package com.example.subscriptionservice.service;
 
+import com.example.entityservice.entity.BlogEntity;
 import com.example.entityservice.entity.SubscriptionEntity;
-import com.example.subscriptionservice.exception.SubscriptionNotFoundException;
+import com.example.entityservice.entity.UserEntity;
+import com.example.subscriptionservice.dto.SubscriptionRequest;
+import com.example.subscriptionservice.exception.NotFoundException;
 import com.example.subscriptionservice.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,15 @@ public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
 
+    private final BlogService blogService;
+
+    private final UserService userService;
+
+    private final SequenceGeneratorService sequenceGeneratorService;
+
+    private static final String SEQUENCE_NAME = "subscription_sequence";
+
+
     public List<SubscriptionEntity> findAllSubscriptions() {
         return subscriptionRepository.findAll();
     }
@@ -21,13 +33,41 @@ public class SubscriptionService {
     public SubscriptionEntity getSubscriptionById(Long id) {
         return subscriptionRepository.findById(id)
                 .orElseThrow(
-                        () -> new SubscriptionNotFoundException("subscription with id %d was not found".formatted(id))
+                        () -> new NotFoundException("subscription with id %d was not found".formatted(id))
                 );
     }
 
-    public SubscriptionEntity subscribe(SubscriptionEntity subscriptionEntity) {
-        return subscriptionRepository.save(subscriptionEntity);
+    public void saveSubscription(SubscriptionEntity subscriptionEntity) {
+        subscriptionRepository.save(subscriptionEntity);
+    }
 
+    public SubscriptionEntity saveSubscription(SubscriptionRequest subscriptionRequest) {
+        BlogEntity foundBlogEntity = blogService.getBlogEntityById(subscriptionRequest.getBlogId());
+        UserEntity foundUserEntity = userService.getUserEntityById(subscriptionRequest.getUserId());
+
+        SubscriptionEntity builtUser = SubscriptionEntity.builder()
+                .id(sequenceGeneratorService.generateSequence(SEQUENCE_NAME))
+                .blogId(subscriptionRequest.getBlogId())
+                .userId(subscriptionRequest.getUserId())
+                .username(foundUserEntity.getUsername())
+                .blogName(foundBlogEntity.getTitle())
+                .build();
+
+        subscriptionRepository.save(builtUser);
+
+        return builtUser;
+    }
+
+    public SubscriptionEntity updateSubscription(SubscriptionEntity subscriptionEntity, SubscriptionRequest subscriptionRequest) {
+        BlogEntity foundBlogEntity = blogService.getBlogEntityById(subscriptionRequest.getBlogId());
+        UserEntity foundUserEntity = userService.getUserEntityById(subscriptionRequest.getUserId());
+
+        subscriptionEntity.setBlogId(foundBlogEntity.getId());
+        subscriptionEntity.setUserId(foundUserEntity.getId());
+        subscriptionEntity.setBlogName(foundBlogEntity.getTitle());
+        subscriptionEntity.setUsername(foundUserEntity.getUsername());
+
+        return subscriptionEntity;
     }
 
     public void deleteSubscriptionById(Long id) {
@@ -36,10 +76,6 @@ public class SubscriptionService {
 
     public List<SubscriptionEntity> findSubscriptionByUserId(Long userId) {
         return subscriptionRepository.findByUserId(userId);
-    }
-
-    public void deleteSubscriptionByUserIdAndBlogId(Long userId, Long blogId) {
-        subscriptionRepository.deleteByUserIdAndBlogId(userId, blogId);
     }
 
     public List<SubscriptionEntity> findSubscriptionByBlogId(Long blogId) {

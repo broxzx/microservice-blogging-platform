@@ -29,7 +29,7 @@ spring:
         - id: subscription-service
           uri: lb://subscription-service
           predicates:
-            - Path=/subscriptions/**
+            - Path=/subscription/**
           filters:
             - AuthenticationFilter
 

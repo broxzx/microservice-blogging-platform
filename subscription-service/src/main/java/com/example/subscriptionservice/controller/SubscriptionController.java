@@ -1,16 +1,13 @@
 package com.example.subscriptionservice.controller;
 
 import com.example.entityservice.entity.SubscriptionEntity;
-import com.example.subscriptionservice.repository.BlogRepository;
-import com.example.subscriptionservice.repository.UserRepository;
-import com.example.subscriptionservice.service.SequenceGeneratorService;
+import com.example.subscriptionservice.dto.SubscriptionRequest;
+import com.example.subscriptionservice.dto.SubscriptionResponse;
 import com.example.subscriptionservice.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,19 +18,15 @@ public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
 
-    private final SequenceGeneratorService sequenceGeneratorService;
-
-    private final BlogRepository blogRepository;
-
-    private final UserRepository userRepository;
-
-    private static final String FIND_ALL_SUBSCRIBERS = "/";
-    private static final String FIND_ALL_USERS_SUBSCRIPTION = "/";
-
+    private static final String FIND_ALL_SUBSCRIBERS = "/subscribers/{blogId}";
+    private static final String FIND_ALL_USERS_SUBSCRIPTION = "/subscriptions/{userId}";
     private static final String CREATE_SUBSCRIPTION = "/";
+    private static final String UPDATE_SUBSCRIPTION = "/{subscriptionId}";
+    private static final String DELETE_SUBSCRIPTION = "/{subscriptionId}";
+
 
     @GetMapping(FIND_ALL_SUBSCRIBERS)
-    public ResponseEntity<List<String>> findAllBlogSubscribersByBlogId(@RequestParam(name = "blogId") Long blogId) {
+    public ResponseEntity<List<String>> findAllBlogSubscribersByBlogId(@PathVariable Long blogId) {
         List<SubscriptionEntity> subscriptionsByBlogId = subscriptionService.findSubscriptionByBlogId(blogId);
 
         List<String> usernameSubscribers = subscriptionsByBlogId
@@ -44,9 +37,13 @@ public class SubscriptionController {
         return ResponseEntity
                 .ok(usernameSubscribers);
     }
+    @GetMapping("/")
+    public List<SubscriptionEntity> getAll() {
+        return subscriptionService.findAllSubscriptions();
+    }
 
     @GetMapping(FIND_ALL_USERS_SUBSCRIPTION)
-    public ResponseEntity<List<String>> findAllBlogsWithUserId(@RequestParam(name = "userId") Long userId) {
+    public ResponseEntity<List<String>> findAllBlogsWithUserId(@PathVariable Long userId) {
         List<SubscriptionEntity> subscriptionsByUserId = subscriptionService.findSubscriptionByUserId(userId);
 
         List<String> userSubscription = subscriptionsByUserId
@@ -58,9 +55,48 @@ public class SubscriptionController {
                 .ok(userSubscription);
     }
 
-//    @PostMapping(CREATE_SUBSCRIPTION)
-//    public ResponseEntity<SubscriptionResponse> createSubscription(@RequestBody SubscriptionRequest subscriptionRequest) {
-//        Optional<BlogEntity> byId = blogRepository.findById(subscriptionRequest.getBlogId());
-//
-//    }
+    @PostMapping(CREATE_SUBSCRIPTION)
+    public ResponseEntity<SubscriptionResponse> createSubscription(@RequestBody SubscriptionRequest subscriptionRequest) {
+        SubscriptionEntity subscriptionEntity = subscriptionService.saveSubscription(subscriptionRequest);
+
+        SubscriptionResponse response = SubscriptionResponse.builder()
+                .blogName(subscriptionEntity.getBlogName())
+                .username(subscriptionEntity.getUsername())
+                .build();
+
+
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
+    }
+
+
+    @PutMapping(UPDATE_SUBSCRIPTION)
+    public ResponseEntity<SubscriptionResponse> updateSubscription(@PathVariable Long subscriptionId, @RequestBody SubscriptionRequest request) {
+        SubscriptionEntity foundSubscriptionById = subscriptionService.getSubscriptionById(subscriptionId);
+
+        SubscriptionEntity updatedSubscriptionEntity = subscriptionService.updateSubscription(foundSubscriptionById, request);
+
+        subscriptionService.saveSubscription(updatedSubscriptionEntity);
+
+        SubscriptionResponse response = SubscriptionResponse.builder()
+                .username(updatedSubscriptionEntity.getUsername())
+                .blogName(updatedSubscriptionEntity.getBlogName())
+                .build();
+
+        return ResponseEntity
+                .ok(response);
+    }
+
+
+    @DeleteMapping(DELETE_SUBSCRIPTION)
+    public ResponseEntity<String> deleteSubscriptionById(@PathVariable Long subscriptionId) {
+        subscriptionService.getSubscriptionById(subscriptionId);
+
+        subscriptionService.deleteSubscriptionById(subscriptionId);
+
+        return ResponseEntity
+                .ok("subscription with id '%d' was deleted".formatted(subscriptionId));
+    }
 }

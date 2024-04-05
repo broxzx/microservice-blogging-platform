@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(SubscriptionNotFoundException.class)
-    public ResponseEntity<ProblemDetail> subscriptionNotFoundExceptionHandler(SubscriptionNotFoundException exception) {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ProblemDetail> subscriptionNotFoundExceptionHandler(NotFoundException exception) {
         ProblemDetail problemDetail = ProblemDetail
-                .forStatusAndDetail(HttpStatus.NOT_FOUND, "such subscription doesn't exist");
+                .forStatusAndDetail(HttpStatus.NOT_FOUND, "such element wasn't found");
 
         problemDetail.setProperty("errors", exception.getMessage());
 

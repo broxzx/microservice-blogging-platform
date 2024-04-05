@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class SubscriptionEntity {
 
     @Transient
-    private static final String SEQUENCE_NAME = "subscription_name";
+    private static final String SEQUENCE_NAME = "subscription_sequence";
 
     @Id
     private Long id;

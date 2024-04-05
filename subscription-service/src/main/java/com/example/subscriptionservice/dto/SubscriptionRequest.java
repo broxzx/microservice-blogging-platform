@@ -8,4 +8,6 @@ import lombok.Data;
 public class SubscriptionRequest {
 
     private Long blogId;
+
+    private Long userId;
 }

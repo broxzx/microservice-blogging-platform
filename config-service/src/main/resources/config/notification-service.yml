@@ -5,5 +5,28 @@ spring:
   rabbitmq:
     username: user
     password: password
-    port: 5672
-    host: localhost
+
+#eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+#logging
+logging:
+  level:
+    root: info
+    web: info
+    sql: info
+
+#actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+    info:
+      enabled: true

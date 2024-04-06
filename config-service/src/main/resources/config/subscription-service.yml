@@ -21,6 +21,12 @@ spring:
     username: user
     password: password
 
+#rabbit-variables
+rabbitmq:
+  queue: notifications-queue
+  routing-key: notification.push
+  exchange: notification-exchange
+
 #eureka
 eureka:
   client:

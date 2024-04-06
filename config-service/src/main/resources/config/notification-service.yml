@@ -6,6 +6,19 @@ spring:
   rabbitmq:
     username: user
     password: password
+  mail:
+    activated: false
+    sender: example@gmail.com
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+        starttls:
+          enable: true
 
 #rabbit-variables
 rabbitmq:

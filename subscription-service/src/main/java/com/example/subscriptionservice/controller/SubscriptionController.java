@@ -57,7 +57,7 @@ public class SubscriptionController {
 
     @PostMapping(CREATE_SUBSCRIPTION)
     public ResponseEntity<SubscriptionResponse> createSubscription(@RequestBody SubscriptionRequest subscriptionRequest) {
-        SubscriptionEntity subscriptionEntity = subscriptionService.saveSubscription(subscriptionRequest);
+        SubscriptionEntity subscriptionEntity = subscriptionService.saveSubscriptionAndSendNotification(subscriptionRequest);
 
         SubscriptionResponse response = SubscriptionResponse.builder()
                 .blogName(subscriptionEntity.getBlogName())
@@ -76,7 +76,7 @@ public class SubscriptionController {
 
         SubscriptionEntity updatedSubscriptionEntity = subscriptionService.updateSubscription(foundSubscriptionById, request);
 
-        subscriptionService.saveSubscription(updatedSubscriptionEntity);
+        subscriptionService.saveSubscriptionAndSendNotification(updatedSubscriptionEntity);
 
         SubscriptionResponse response = SubscriptionResponse.builder()
                 .username(updatedSubscriptionEntity.getUsername())

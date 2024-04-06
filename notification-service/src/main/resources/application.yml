@@ -3,3 +3,16 @@ spring:
     name: notification-service
   config:
     import: "optional:configserver:http://localhost:8888"
+  mail:
+    activated: false
+    sender: example@gmail.com
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+        starttls:
+          enable: true

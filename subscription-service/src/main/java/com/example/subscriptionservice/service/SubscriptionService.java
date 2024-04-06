@@ -41,11 +41,11 @@ public class SubscriptionService {
                 );
     }
 
-    public void saveSubscription(SubscriptionEntity subscriptionEntity) {
+    public void saveSubscriptionAndSendNotification(SubscriptionEntity subscriptionEntity) {
         subscriptionRepository.save(subscriptionEntity);
     }
 
-    public SubscriptionEntity saveSubscription(SubscriptionRequest subscriptionRequest) {
+    public SubscriptionEntity saveSubscriptionAndSendNotification(SubscriptionRequest subscriptionRequest) {
         BlogEntity foundBlogEntity = blogService.getBlogEntityById(subscriptionRequest.getBlogId());
         UserEntity foundUserEntity = userService.getUserEntityById(subscriptionRequest.getUserId());
 

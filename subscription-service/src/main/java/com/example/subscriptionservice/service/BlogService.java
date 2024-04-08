@@ -1,6 +1,6 @@
 package com.example.subscriptionservice.service;
 
-import com.example.entityservice.entity.BlogEntity;
+import com.example.subscriptionservice.entity.BlogEntity;
 import com.example.subscriptionservice.exception.NotFoundException;
 import com.example.subscriptionservice.repository.BlogRepository;
 import lombok.RequiredArgsConstructor;

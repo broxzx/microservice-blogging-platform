@@ -1,9 +1,9 @@
 package com.example.subscriptionservice.service;
 
-import com.example.entityservice.entity.BlogEntity;
-import com.example.entityservice.entity.SubscriptionEntity;
-import com.example.entityservice.entity.UserEntity;
 import com.example.subscriptionservice.dto.SubscriptionRequest;
+import com.example.subscriptionservice.entity.BlogEntity;
+import com.example.subscriptionservice.entity.SubscriptionEntity;
+import com.example.subscriptionservice.entity.UserEntity;
 import com.example.subscriptionservice.exception.NotFoundException;
 import com.example.subscriptionservice.model.NotificationModel;
 import com.example.subscriptionservice.producer.RabbitMQNotificationProducer;

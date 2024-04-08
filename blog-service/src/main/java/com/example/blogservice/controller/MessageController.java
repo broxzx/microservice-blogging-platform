@@ -2,13 +2,13 @@ package com.example.blogservice.controller;
 
 import com.example.blogservice.dto.MessageRequestDto;
 import com.example.blogservice.dto.MessageResponseDto;
+import com.example.blogservice.entity.BlogEntity;
+import com.example.blogservice.entity.MessageEntity;
 import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.MessageService;
 import com.example.blogservice.service.SequenceGeneratorService;
 import com.example.blogservice.service.UserService;
 import com.example.blogservice.utils.MessageResponseDtoFactory;
-import com.example.entityservice.entity.BlogEntity;
-import com.example.entityservice.entity.MessageEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
 package com.example.blogservice.dto;
 
-import com.example.entityservice.entity.MessageEntity;
+import com.example.blogservice.entity.MessageEntity;
 import lombok.Builder;
 import lombok.Data;
 

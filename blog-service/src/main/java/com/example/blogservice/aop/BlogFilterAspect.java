@@ -1,12 +1,12 @@
 package com.example.blogservice.aop;
 
 import com.example.blogservice.dto.BlogResponseDto;
+import com.example.blogservice.entity.BlogEntity;
+import com.example.blogservice.entity.Role;
+import com.example.blogservice.entity.UserEntity;
 import com.example.blogservice.exception.AccessDeniedException;
 import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.UserService;
-import com.example.entityservice.entity.BlogEntity;
-import com.example.entityservice.entity.UserEntity;
-import com.example.entityservice.role.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;

@@ -24,7 +24,6 @@
         <module>subscription-service</module>
         <module>blog-service</module>
         <module>config-service</module>
-        <module>entity-service</module>
         <module>eureka-discovery-server</module>
         <module>gateway-service</module>
         <module>notification-service</module>
@@ -69,6 +68,27 @@
                     </excludes>
                 </configuration>
             </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.google.cloud.tools</groupId>-->
+<!--                <artifactId>jib-maven-plugin</artifactId>-->
+<!--                <version>3.4.1</version>-->
+<!--                <configuration>-->
+<!--                    <from>-->
+<!--                        <image>eclipse-temurin:17.0.4.1_1-jre</image>-->
+<!--                    </from>-->
+<!--                    <to>-->
+<!--                        <image>registry.hub.docker.com/fyuizee/${project.artifactId}</image>-->
+<!--                    </to>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>dockerBuild</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 

@@ -1,6 +1,5 @@
-package com.example.entityservice.entity;
+package com.example.security.entity;
 
-import com.example.entityservice.role.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,6 +1,6 @@
 package com.example.subscriptionservice.repository;
 
-import com.example.entityservice.entity.SubscriptionEntity;
+import com.example.subscriptionservice.entity.SubscriptionEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

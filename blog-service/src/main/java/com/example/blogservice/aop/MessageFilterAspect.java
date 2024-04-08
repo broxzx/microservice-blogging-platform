@@ -2,14 +2,14 @@ package com.example.blogservice.aop;
 
 import com.example.blogservice.dto.MessageRequestDto;
 import com.example.blogservice.dto.MessageResponseDto;
+import com.example.blogservice.entity.BlogEntity;
+import com.example.blogservice.entity.MessageEntity;
+import com.example.blogservice.entity.Role;
+import com.example.blogservice.entity.UserEntity;
 import com.example.blogservice.exception.AccessDeniedException;
 import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.MessageService;
 import com.example.blogservice.service.UserService;
-import com.example.entityservice.entity.BlogEntity;
-import com.example.entityservice.entity.MessageEntity;
-import com.example.entityservice.entity.UserEntity;
-import com.example.entityservice.role.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;

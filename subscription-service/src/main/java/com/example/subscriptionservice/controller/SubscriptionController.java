@@ -1,8 +1,8 @@
 package com.example.subscriptionservice.controller;
 
-import com.example.entityservice.entity.SubscriptionEntity;
 import com.example.subscriptionservice.dto.SubscriptionRequest;
 import com.example.subscriptionservice.dto.SubscriptionResponse;
+import com.example.subscriptionservice.entity.SubscriptionEntity;
 import com.example.subscriptionservice.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

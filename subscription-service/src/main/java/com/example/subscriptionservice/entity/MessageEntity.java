@@ -1,4 +1,4 @@
-package com.example.entityservice.entity;
+package com.example.subscriptionservice.entity;
 
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
@@ -8,24 +8,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
+@Document(collection = "messages")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Builder
-@Document(collection = "subscription")
-public class SubscriptionEntity {
+@Data
+public class MessageEntity {
 
     @Transient
-    private static final String SEQUENCE_NAME = "subscription_sequence";
+    private static final String SEQUENCE_NAME = "message_sequence";
 
     @Id
     private Long id;
 
-    private Long userId;
+    private String content;
 
-    private String username;
+    private String authorId;
 
-    private Long blogId;
+    private String blogId;
 
-    private String blogName;
+    private LocalDateTime createdAt;
 }

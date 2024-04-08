@@ -1,7 +1,7 @@
 package com.example.blogservice.utils;
 
 import com.example.blogservice.dto.MessageResponseDto;
-import com.example.entityservice.entity.MessageEntity;
+import com.example.blogservice.entity.MessageEntity;
 import org.springframework.stereotype.Component;
 
 @Component

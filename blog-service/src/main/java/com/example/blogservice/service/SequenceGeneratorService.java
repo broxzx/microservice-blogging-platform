@@ -1,6 +1,6 @@
 package com.example.blogservice.service;
 
-import com.example.entityservice.entity.DatabaseSequence;
+import com.example.blogservice.entity.DatabaseSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;

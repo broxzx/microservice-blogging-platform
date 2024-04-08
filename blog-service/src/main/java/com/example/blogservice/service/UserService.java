@@ -1,9 +1,9 @@
 package com.example.blogservice.service;
 
+import com.example.blogservice.entity.UserEntity;
 import com.example.blogservice.exception.UserNotFoundException;
 import com.example.blogservice.repository.UserRepository;
 import com.example.blogservice.utils.JwtTokenUtils;
-import com.example.entityservice.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

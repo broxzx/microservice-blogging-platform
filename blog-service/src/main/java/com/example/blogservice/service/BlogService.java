@@ -1,9 +1,9 @@
 package com.example.blogservice.service;
 
 import com.example.blogservice.dto.BlogRequestDto;
+import com.example.blogservice.entity.BlogEntity;
 import com.example.blogservice.exception.BlogNotFoundException;
 import com.example.blogservice.repository.BlogRepository;
-import com.example.entityservice.entity.BlogEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

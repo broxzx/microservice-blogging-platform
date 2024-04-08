@@ -2,11 +2,11 @@ package com.example.blogservice.controller;
 
 import com.example.blogservice.dto.BlogRequestDto;
 import com.example.blogservice.dto.BlogResponseDto;
+import com.example.blogservice.entity.BlogEntity;
 import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.SequenceGeneratorService;
 import com.example.blogservice.service.UserService;
 import com.example.blogservice.utils.BlogResponseDtoFactory;
-import com.example.entityservice.entity.BlogEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

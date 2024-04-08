@@ -1,4 +1,4 @@
-package com.example.entityservice.entity;
+package com.example.subscriptionservice.entity;
 
 import jakarta.persistence.Id;
 import lombok.Data;

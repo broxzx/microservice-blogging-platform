@@ -1,9 +1,9 @@
 package com.example.blogservice.service;
 
 import com.example.blogservice.dto.MessageRequestDto;
+import com.example.blogservice.entity.MessageEntity;
 import com.example.blogservice.exception.MessageNotFoundException;
 import com.example.blogservice.repository.MessageRepository;
-import com.example.entityservice.entity.MessageEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

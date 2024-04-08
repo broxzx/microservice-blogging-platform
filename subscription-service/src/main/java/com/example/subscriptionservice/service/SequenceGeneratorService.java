@@ -1,6 +1,6 @@
 package com.example.subscriptionservice.service;
 
-import com.example.entityservice.entity.DatabaseSequence;
+import com.example.subscriptionservice.entity.DatabaseSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;

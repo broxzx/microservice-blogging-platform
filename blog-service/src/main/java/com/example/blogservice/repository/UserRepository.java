@@ -1,6 +1,6 @@
 package com.example.blogservice.repository;
 
-import com.example.entityservice.entity.UserEntity;
+import com.example.blogservice.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

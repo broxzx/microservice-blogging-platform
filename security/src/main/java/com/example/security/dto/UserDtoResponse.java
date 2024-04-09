@@ -1,5 +1,6 @@
 package com.example.security.dto;
 
+import com.example.security.entity.Role;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,4 +13,6 @@ public class UserDtoResponse {
     private String username;
 
     private String email;
+
+    private Role role;
 }

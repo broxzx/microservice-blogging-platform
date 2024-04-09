@@ -5,8 +5,8 @@ import com.example.blogservice.dto.MessageResponseDto;
 import com.example.blogservice.entity.BlogEntity;
 import com.example.blogservice.entity.MessageEntity;
 import com.example.blogservice.entity.Role;
-import com.example.blogservice.entity.UserEntity;
 import com.example.blogservice.exception.AccessDeniedException;
+import com.example.blogservice.model.UserModelResponse;
 import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.MessageService;
 import com.example.blogservice.service.UserService;
@@ -39,13 +39,13 @@ public class MessageFilterAspect {
                     && @annotation(org.springframework.web.bind.annotation.DeleteMapping)
             """, argNames = "joinPoint,blogId,messageId")
     public Object checkAccessToDeleteMessage(ProceedingJoinPoint joinPoint, Long blogId, Long messageId) throws Throwable {
-        UserEntity foundUserEntity = findUserEntityByToken();
+        UserModelResponse userModelResponse = findUserEntityByToken();
         BlogEntity foundBlogEntity = blogService.findById(blogId);
         MessageEntity foundMessageEntity = messageService.findMessageEntityById(messageId);
 
-        String stringUserId = String.valueOf(foundUserEntity.getId());
+        String stringUserId = String.valueOf(userModelResponse.userId());
         if (!Objects.equals(foundMessageEntity.getAuthorId(), stringUserId) && !Objects.equals(foundBlogEntity.getOwnerId(), stringUserId)
-                && (foundUserEntity.getRole() != Role.ROLE_ADMIN && foundUserEntity.getRole() != Role.ROLE_MANAGER)) {
+                && (userModelResponse.role() != Role.ROLE_ADMIN && userModelResponse.role() != Role.ROLE_MANAGER)) {
             throw new AccessDeniedException("you don't have access to this message");
         }
 
@@ -59,13 +59,13 @@ public class MessageFilterAspect {
                     && args(blogId, messageId, messageRequestDto) && @annotation(org.springframework.web.bind.annotation.PutMapping)
             """, argNames = "joinPoint,blogId,messageId,messageRequestDto")
     public Object checkAccessUpdateMessage(ProceedingJoinPoint joinPoint, Long blogId, Long messageId, MessageRequestDto messageRequestDto) throws Throwable {
-        UserEntity foundUserEntity = findUserEntityByToken();
+        UserModelResponse userModelResponse = findUserEntityByToken();
         MessageEntity foundMessageEntity = messageService.findMessageEntityById(messageId);
 
-        String stringUserId = String.valueOf(foundUserEntity.getId());
+        String stringUserId = String.valueOf(userModelResponse.userId());
 
-        if (!Objects.equals(foundMessageEntity.getAuthorId(), stringUserId) && foundUserEntity.getRole() != Role.ROLE_ADMIN
-                && foundUserEntity.getRole() != Role.ROLE_MANAGER) {
+        if (!Objects.equals(foundMessageEntity.getAuthorId(), stringUserId) && userModelResponse.role() != Role.ROLE_ADMIN
+                && userModelResponse.role() != Role.ROLE_MANAGER) {
             throw new AccessDeniedException("you are not owner of this message");
         }
 
@@ -74,7 +74,7 @@ public class MessageFilterAspect {
         return response;
     }
 
-    private UserEntity findUserEntityByToken() {
+    private UserModelResponse findUserEntityByToken() {
         HttpServletRequest httpServletRequest = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
         String token = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);

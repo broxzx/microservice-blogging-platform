@@ -3,8 +3,8 @@ package com.example.blogservice.aop;
 import com.example.blogservice.dto.BlogResponseDto;
 import com.example.blogservice.entity.BlogEntity;
 import com.example.blogservice.entity.Role;
-import com.example.blogservice.entity.UserEntity;
 import com.example.blogservice.exception.AccessDeniedException;
+import com.example.blogservice.model.UserModelResponse;
 import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,14 +36,14 @@ public class BlogFilterAspect {
                 execution(* com.example.blogservice.controller.BlogController.getAllBlogs()) && @annotation(org.springframework.web.bind.annotation.GetMapping))
             """)
     public Object filterBlogs(ProceedingJoinPoint joinPoint) throws Throwable {
-        UserEntity userEntity = getUserByToken();
+        UserModelResponse userModelResponse = getUserByToken();
 
-        List<BlogEntity> filteredBlogEntities = blogService.findBlogEntityByOwnerId(String.valueOf(userEntity.getId()));
+        List<BlogEntity> filteredBlogEntities = blogService.findBlogEntityByOwnerId(String.valueOf(userModelResponse.userId()));
 
         ResponseEntity<List<BlogResponseDto>> result = (ResponseEntity<List<BlogResponseDto>>) joinPoint.proceed();
 
         if (result.getBody() != null) {
-            Role currentUserRole = userEntity.getRole();
+            Role currentUserRole = userModelResponse.role();
             if (currentUserRole == Role.ROLE_ADMIN || currentUserRole == Role.ROLE_MANAGER) {
                 return result;
             } else {
@@ -63,12 +63,12 @@ public class BlogFilterAspect {
                     execution(* com.example.blogservice.controller.BlogController.getBlogById(Long)) && @annotation(org.springframework.web.bind.annotation.GetMapping)
             """)
     public Object checkAccessGetBlogById(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        UserEntity userEntity = getUserByToken();
+        UserModelResponse userModelResponse = getUserByToken();
 
         ResponseEntity<BlogResponseDto> response = (ResponseEntity<BlogResponseDto>) proceedingJoinPoint.proceed();
 
         if (response.getBody() != null) {
-            Role currentUserRole = userEntity.getRole();
+            Role currentUserRole = userModelResponse.role();
 
             if (currentUserRole == Role.ROLE_ADMIN || currentUserRole == Role.ROLE_MANAGER) {
                 return response;
@@ -76,7 +76,7 @@ public class BlogFilterAspect {
 
             BlogResponseDto responseBody = response.getBody();
 
-            if (!Objects.equals(responseBody.getOwnerId(), String.valueOf(userEntity.getId()))) {
+            if (!Objects.equals(responseBody.getOwnerId(), String.valueOf(userModelResponse.userId()))) {
                 throw new AccessDeniedException("you don't have access to this blog");
             } else {
                 return response;
@@ -93,18 +93,20 @@ public class BlogFilterAspect {
                     execution(* com.example.blogservice.controller.BlogController.deleteBlogById(Long)) && args(id) && @annotation(org.springframework.web.bind.annotation.DeleteMapping)
             """)
     public Object checkAccessUpdateDeleteBlogEntity(ProceedingJoinPoint joinPoint, Long id) throws Throwable {
-        UserEntity userEntity = getUserByToken();
+        UserModelResponse userModelResponse = getUserByToken();
 
         BlogEntity foundBlogEntity = blogService.findById(id);
 
-        if (!Objects.equals(foundBlogEntity.getOwnerId(), String.valueOf(userEntity.getId())) && (userEntity.getRole() != Role.ROLE_ADMIN && userEntity.getRole() != Role.ROLE_MANAGER)) {
+        if (!Objects.equals(foundBlogEntity.getOwnerId(), String.valueOf(userModelResponse.userId()))
+                && (userModelResponse.role() != Role.ROLE_ADMIN
+                && userModelResponse.role() != Role.ROLE_MANAGER)) {
             throw new AccessDeniedException("you don't have access to the blog with id %d".formatted(id));
         }
 
         return (ResponseEntity<BlogResponseDto>) joinPoint.proceed();
     }
 
-    private UserEntity getUserByToken() {
+    private UserModelResponse getUserByToken() {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);

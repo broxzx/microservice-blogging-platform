@@ -1,42 +1,40 @@
 package com.example.blogservice.service;
 
-import com.example.blogservice.entity.UserEntity;
-import com.example.blogservice.exception.UserNotFoundException;
-import com.example.blogservice.repository.UserRepository;
+import com.example.blogservice.model.UserModelResponse;
 import com.example.blogservice.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final WebClient webClient;
 
     private final JwtTokenUtils jwtTokenUtils;
 
     public String findUserIdByJwtToken(String token) {
-        String username = jwtTokenUtils.getUsername(token);
-        UserEntity foundUser = userRepository.findByUsername(username)
-                .orElseThrow(
-                        () -> new UserNotFoundException("user with username '%s' was not found".formatted(username))
-                );
-
-        return String.valueOf(foundUser.getId());
+        return String.valueOf(Objects.requireNonNull(findUserEntityByJwtToken(token).userId()));
     }
 
     public String verifyToken(String token) {
         return jwtTokenUtils.verifyToken(token);
     }
 
-    public UserEntity findUserEntityByJwtToken(String token) {
+    public UserModelResponse findUserEntityByJwtToken(String token) {
         String username = jwtTokenUtils.getUsername(token);
+        UserModelResponse userModelResponse = webClient
+                .get()
+                .uri("http://localhost:8080/user", uriBuilder -> uriBuilder
+                        .queryParam("username", username)
+                        .build())
+                .retrieve()
+                .bodyToMono(UserModelResponse.class)
+                .block();
 
-        UserEntity foundUserEntity = userRepository.findByUsername(username)
-                .orElseThrow(
-                        () -> new UserNotFoundException("user with username '%s' was not found".formatted(username))
-                );
-
-        return foundUserEntity;
+        return userModelResponse;
     }
 }

@@ -34,8 +34,23 @@ public class UserService {
                 .userId(foundUserById.getId())
                 .username(foundUserById.getUsername())
                 .email(foundUserById.getEmail())
+                .role(foundUserById.getRole())
                 .build();
     }
 
+    @Transactional
+    public UserDtoResponse getUserResponseByUsername(String username) {
+        UserEntity foundUserEntity = userRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new UserNotFoundException("user with username '%s' was not found".formatted(username))
+                );
+
+        return UserDtoResponse.builder()
+                .userId(foundUserEntity.getId())
+                .username(foundUserEntity.getUsername())
+                .email(foundUserEntity.getEmail())
+                .role(foundUserEntity.getRole())
+                .build();
+    }
 
 }

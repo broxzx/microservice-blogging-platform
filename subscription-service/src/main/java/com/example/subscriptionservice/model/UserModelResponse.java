@@ -1,4 +1,6 @@
 package com.example.subscriptionservice.model;
 
-public record UserModelResponse(Long userId, String username, String email) {
+import com.example.subscriptionservice.entity.Role;
+
+public record UserModelResponse(Long userId, String username, String email, Role role) {
 }

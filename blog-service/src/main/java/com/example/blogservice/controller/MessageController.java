@@ -100,12 +100,21 @@ public class MessageController {
     @PutMapping(UPDATE_MESSAGE_BY_ID_IN_BLOG)
     public ResponseEntity<MessageResponseDto> updateMessageEntityById(@PathVariable Long blogId, @PathVariable Long messageId,
                                                                       @RequestBody MessageRequestDto messageRequest) {
-        blogService.findById(blogId);
+        BlogEntity foundBlogEntity = blogService.findById(blogId);
 
         MessageEntity foundMessageEntity = messageService.findMessageEntityById(messageId);
 
         messageService.updateMessageEntity(foundMessageEntity, messageRequest);
         messageService.save(foundMessageEntity);
+
+        List<MessageEntity> messages = foundBlogEntity.getMessages();
+
+        messages.stream()
+                .filter(message -> Objects.equals(message.getId(), foundMessageEntity.getId()))
+                .findFirst()
+                .ifPresent(message -> message.setContent(foundMessageEntity.getContent()));
+
+        blogService.save(foundBlogEntity);
 
         MessageResponseDto response = MessageResponseDto.builder()
                 .id(foundMessageEntity.getId())

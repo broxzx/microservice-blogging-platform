@@ -1,17 +1,23 @@
 version: '3.8'
 services:
   postgresdb:
+    container_name: postgres-db
     image: postgres
     ports:
       - "5432:5432"
+    expose:
+      - "5432"
     volumes:
       - postgres_data_container:/data/db
     environment:
       POSTGRES_DB: security-db
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
+    command: -p 5432
+    restart: unless-stopped
 
   mongodb:
+    container_name: mongo-db
     image: mongo:latest
     ports:
       - "27017:27017"
@@ -21,6 +27,9 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
       MONGO_INITDB_DATABASE: blog-service
+    expose:
+      - "27017"
+    restart: unless-stopped
 
   rabbitmq:
     image: rabbitmq:3-management-alpine

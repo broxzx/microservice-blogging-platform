@@ -1,10 +1,9 @@
-#server
-server:
-  port: 8761
-
 #spring
+server:
+  port: 8080
+
 spring:
   application:
-    name: eureka-discovery-server
+    name: gateway-service
   config:
     import: "optional:configserver:http://localhost:8888"

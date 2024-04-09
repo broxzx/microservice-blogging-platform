@@ -1,3 +1,7 @@
+#server
+server:
+  port: 0
+
 #spring
 spring:
   application:

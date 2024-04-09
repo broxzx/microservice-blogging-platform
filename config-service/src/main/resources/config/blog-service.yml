@@ -1,7 +1,3 @@
-#server
-server:
-  port: 0
-
 #cloud
 eureka:
   client:

@@ -4,6 +4,7 @@ import com.example.gatewayservice.exception.AccessDeniedException;
 import com.example.gatewayservice.exception.TokenIsAbsentException;
 import com.example.gatewayservice.exception.TokenIsNotValidException;
 import com.example.gatewayservice.jwtUtils.JwtUtils;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,7 @@ import org.springframework.web.server.ServerWebExchange;
 import java.util.List;
 
 @Component
+@Log4j2
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
 
     private final RouteValidator routeValidator;

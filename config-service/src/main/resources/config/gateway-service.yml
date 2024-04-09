@@ -1,7 +1,3 @@
-#server
-server:
-  port: 8080
-
 #spring
 spring:
   main:
@@ -17,7 +13,7 @@ spring:
         - id: security-service
           uri: lb://security-service
           predicates:
-            - Path=/security/**
+            - Path=/security/**, /user/**
 
         - id: blog-service
           uri: lb://blog-service

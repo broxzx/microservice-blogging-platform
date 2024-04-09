@@ -27,7 +27,11 @@ public class Controller {
 
     private final UserDetailsServiceImpl userDetailsService;
 
-    @PostMapping("/login")
+    private static final String LOGIN = "/login";
+    private static final String REGISTRATION = "/registration";
+    private static final String VALIDATE = "/validate";
+
+    @PostMapping(LOGIN)
     public String login(@RequestBody JwtUserRequest user) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), null));
@@ -41,7 +45,7 @@ public class Controller {
         return token;
     }
 
-    @PostMapping("/registration")
+    @PostMapping(REGISTRATION)
     public ResponseEntity<JwtUserResponse> registration(@RequestBody JwtUserRequest jwtUserRequest) {
         UserEntity savedUser = service.saveUser(UserEntity.builder()
                 .username(jwtUserRequest.getUsername())
@@ -58,7 +62,7 @@ public class Controller {
         return ResponseEntity.ok(jwtUserResponse);
     }
 
-    @GetMapping("/validate")
+    @GetMapping(VALIDATE)
     public ResponseEntity<String> validateToken(@RequestParam String token) {
         jwtTokenProvider.validate(token);
 

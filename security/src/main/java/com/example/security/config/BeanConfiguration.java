@@ -25,7 +25,7 @@ public class BeanConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/security/login", "/security/registration", "security/validate").permitAll()
+                        .requestMatchers("/security/login", "/security/registration", "security/validate", "/user/**").permitAll()
                         .requestMatchers("/swagger-ui/index.html").hasRole("ADMIN"))
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(((request, response, accessDeniedException) -> response.sendRedirect("/register"))))

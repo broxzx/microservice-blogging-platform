@@ -37,6 +37,7 @@ public class SubscriptionController {
         return ResponseEntity
                 .ok(usernameSubscribers);
     }
+
     @GetMapping("/")
     public List<SubscriptionEntity> getAll() {
         return subscriptionService.findAllSubscriptions();

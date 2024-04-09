@@ -1,4 +1,4 @@
-package com.example.subscriptionservice.configuration;
+package com.example.subscriptionservice.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

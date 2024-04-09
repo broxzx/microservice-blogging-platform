@@ -1,11 +1,12 @@
-package com.example.gatewayservice.exception;
+package com.example.subscriptionservice.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-public class TokenIsAbsentException extends RuntimeException {
-    public TokenIsAbsentException(String message) {
+public class TokenIsInvalidException extends RuntimeException {
+
+    public TokenIsInvalidException(String message) {
         super(message);
     }
 }

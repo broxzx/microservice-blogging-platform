@@ -1,11 +1,11 @@
 package com.example.subscriptionservice.service;
 
 import com.example.subscriptionservice.dto.SubscriptionRequest;
-import com.example.subscriptionservice.model.UserModelResponse;
-import com.example.subscriptionservice.entity.BlogEntity;
 import com.example.subscriptionservice.entity.SubscriptionEntity;
 import com.example.subscriptionservice.exception.NotFoundException;
+import com.example.subscriptionservice.model.BlogModelResponse;
 import com.example.subscriptionservice.model.NotificationModel;
+import com.example.subscriptionservice.model.UserModelResponse;
 import com.example.subscriptionservice.producer.RabbitMQNotificationProducer;
 import com.example.subscriptionservice.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +50,7 @@ public class SubscriptionService {
     }
 
     public SubscriptionEntity saveSubscriptionAndSendNotification(SubscriptionRequest subscriptionRequest) {
-        BlogEntity foundBlogEntity = blogService.getBlogEntityById(subscriptionRequest.getBlogId());
+        BlogModelResponse blogModelResponse = blogService.getBlogEntityById(subscriptionRequest.getBlogId());
         UserModelResponse userModelResponse = webClient
                 .get()
                 .uri("http://localhost:8080/user/%d".formatted(subscriptionRequest.getUserId()))
@@ -65,7 +65,7 @@ public class SubscriptionService {
                 .blogId(subscriptionRequest.getBlogId())
                 .userId(subscriptionRequest.getUserId())
                 .username(Objects.requireNonNull(userModelResponse).username())
-                .blogName(foundBlogEntity.getTitle())
+                .blogName(blogModelResponse.title())
                 .build();
 
         subscriptionRepository.save(builtUser);
@@ -82,7 +82,7 @@ public class SubscriptionService {
     }
 
     public SubscriptionEntity updateSubscription(SubscriptionEntity subscriptionEntity, SubscriptionRequest subscriptionRequest) {
-        BlogEntity foundBlogEntity = blogService.getBlogEntityById(subscriptionRequest.getBlogId());
+        BlogModelResponse foundBlogEntity = blogService.getBlogEntityById(subscriptionRequest.getBlogId());
         UserModelResponse userModelResponse = webClient
                 .get()
                 .uri("http://localhost:8080/user/%d".formatted(subscriptionRequest.getUserId()))
@@ -92,9 +92,9 @@ public class SubscriptionService {
 
         log.info(userModelResponse);
 
-        subscriptionEntity.setBlogId(foundBlogEntity.getId());
+        subscriptionEntity.setBlogId(foundBlogEntity.id());
         subscriptionEntity.setUserId(Objects.requireNonNull(userModelResponse).userId());
-        subscriptionEntity.setBlogName(foundBlogEntity.getTitle());
+        subscriptionEntity.setBlogName(foundBlogEntity.title());
         subscriptionEntity.setUsername(userModelResponse.username());
 
         return subscriptionEntity;

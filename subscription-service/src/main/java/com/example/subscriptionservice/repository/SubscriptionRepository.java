@@ -11,5 +11,4 @@ public interface SubscriptionRepository extends MongoRepository<SubscriptionEnti
 
     List<SubscriptionEntity> findByBlogId(Long blogId);
 
-    void deleteByUserIdAndBlogId(Long userId, Long blogId);
 }

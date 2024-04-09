@@ -8,6 +8,7 @@ import com.example.blogservice.service.SequenceGeneratorService;
 import com.example.blogservice.service.UserService;
 import com.example.blogservice.utils.BlogResponseDtoFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("blog")
 @RequiredArgsConstructor
+@Log4j2
 public class BlogController {
 
     private final BlogResponseDtoFactory blogResponseDtoFactory;
@@ -54,6 +56,8 @@ public class BlogController {
         BlogEntity foundBlogEntity = blogService.findById(id);
 
         BlogResponseDto response = blogResponseDtoFactory.makeBlogResponseDto(foundBlogEntity);
+
+        log.info(response);
 
         return ResponseEntity
                 .ok(response);

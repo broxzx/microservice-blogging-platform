@@ -15,16 +15,11 @@ logging:
 
 #spring
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/security-service
-    username: postgres
-    password: root
-    driver-class-name: org.postgresql.Driver
   #db
   data:
     mongodb:
       host: localhost
-      port: 27017
+      port: 27018
       database: blog-service
       uri: mongodb://localhost/blog-service
 

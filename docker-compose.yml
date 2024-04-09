@@ -1,37 +1,53 @@
 version: '3.8'
 services:
-  postgresdb:
-    container_name: postgres-db
+  postgres-user:
+    container_name: postgres-user
     image: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     expose:
-      - "5432"
+      - "5433"
     volumes:
-      - postgres_data_container:/data/db
+      - postgres_user_service:/data/db
     environment:
-      POSTGRES_DB: security-db
+      POSTGRES_DB: security-service
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
     command: -p 5432
     restart: unless-stopped
 
-  mongodb:
-    container_name: mongo-db
+  mongodb-subscription:
+    container_name: mongo-subscription
     image: mongo:latest
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data_container:/data/db
+      - mongodb_subscription_service:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: subscription-service
+    expose:
+      - "27017"
+    restart: unless-stopped
+
+  mongodb-blog:
+    container_name: mongo-blog
+    image: mongo:latest
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_blog_service:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
       MONGO_INITDB_DATABASE: blog-service
     expose:
-      - "27017"
+      - "27018"
     restart: unless-stopped
 
   rabbitmq:
+    container_name: rabbitmq-notification-service
     image: rabbitmq:3-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: user
@@ -42,5 +58,6 @@ services:
 
 
 volumes:
-  postgres_data_container:
-  mongodb_data_container:
+  postgres_user_service:
+  mongodb_subscription_service:
+  mongodb_blog_service:

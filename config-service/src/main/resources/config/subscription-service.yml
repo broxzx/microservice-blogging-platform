@@ -1,10 +1,5 @@
 #mongo
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/security-service
-    username: postgres
-    password: root
-    driver-class-name: org.postgresql.Driver
   data:
     mongodb:
       uri: mongodb://localhost/blog-service
@@ -12,7 +7,7 @@ spring:
       port: 27017
       username: admin
       password: password
-      database: blog-service
+      database: subscription-service
   rabbitmq:
     username: user
     password: password

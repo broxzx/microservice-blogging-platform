@@ -29,5 +29,5 @@ public class BlogEntity {
 
     private String ownerId;
 
-    private List<MessageEntity> messages;
+    private List<Long> messageId;
 }

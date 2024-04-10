@@ -4,7 +4,7 @@ spring:
     mongodb:
       uri: mongodb://localhost/blog-service
       host: localhost
-      port: 27017
+      port: 27019
       username: admin
       password: password
       database: subscription-service

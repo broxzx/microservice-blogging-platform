@@ -2,14 +2,19 @@
 spring:
   #database
   datasource:
-    url: jdbc:postgresql://localhost:5432/security-service
-    username: postgres
+    url: jdbc:postgresql://localhost:5449/security-service
+    username: root
     password: root
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
+  flyway:
+    schemas:
+      - public
+      - users
+
 
 #jwt-token
 jwt:

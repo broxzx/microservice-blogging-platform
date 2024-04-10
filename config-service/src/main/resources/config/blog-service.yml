@@ -21,7 +21,6 @@ spring:
       host: localhost
       port: 27018
       database: blog-service
-      uri: mongodb://localhost/blog-service
 
 #jwt
 jwt:

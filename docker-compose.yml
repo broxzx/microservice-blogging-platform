@@ -41,6 +41,19 @@ services:
       - "27018"
     restart: unless-stopped
 
+  mongodb-message:
+    container_name: mongo-message
+    image: mongo:latest
+    ports:
+      - "27020:27017"
+    volumes:
+      - mongodb_message_service:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: message-service
+    expose:
+      - "27020"
+    restart: unless-stopped
+
   rabbitmq:
     container_name: rabbitmq-notification-service
     image: rabbitmq:3-management-alpine
@@ -57,3 +70,4 @@ volumes:
   postgres_user_service:
   mongodb_subscription_service:
   mongodb_blog_service:
+  mongodb_message_service:

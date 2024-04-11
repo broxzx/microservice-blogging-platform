@@ -35,6 +35,9 @@ public class MessageController {
     private static final String GET_MESSAGE_BY_ID = "/{messageId}";
     private static final String CREATE_MESSAGE_IN_BLOG = "/";
     private static final String GET_ALL_MESSAGES = "/";
+    private static final String UPDATE_MESSAGE_BY_ID = "/{messageId}";
+    private static final String DELETE_MESSAGE_BY_ID = "/{messageId}";
+
 
     @GetMapping(GET_ALL_MESSAGES_BY_BLOG_ID)
     public ResponseEntity<List<MessageResponseDto>> getAllMessagesInBlog(@PathVariable Long blogId) {
@@ -90,6 +93,28 @@ public class MessageController {
 
         return ResponseEntity
                 .ok(response);
+    }
+
+    @PutMapping(UPDATE_MESSAGE_BY_ID)
+    public ResponseEntity<MessageResponseDto> updateMessageEntity(@PathVariable Long messageId,
+                                                                  @RequestBody MessageRequestDto messageRequestDto) {
+        MessageEntity messageEntityById = messageService.getMessageEntityById(messageId);
+
+        messageService.updateMessageEntity(messageEntityById, messageRequestDto);
+
+        messageService.save(messageEntityById);
+
+        return ResponseEntity
+                .ok(messageResponseDtoFactory.makeMessageResponseDto(messageEntityById));
+    }
+
+    @DeleteMapping(DELETE_MESSAGE_BY_ID)
+    public ResponseEntity<MessageResponseDto> deleteMessageEntityById(@PathVariable Long messageId) {
+        MessageEntity messageEntity = messageService.getMessageEntityById(messageId);
+
+        messageService.deleteById(messageId);
+
+        return ResponseEntity.ok(messageResponseDtoFactory.makeMessageResponseDto(messageEntity));
     }
 
 }

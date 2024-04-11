@@ -1,10 +1,10 @@
-package com.example.blogservice.exception;
+package com.messageservice.messageservice.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
-public class TokenIsInvalidException extends RuntimeException{
+public class TokenIsInvalidException extends RuntimeException {
 
     public TokenIsInvalidException(String message) {
         super(message);

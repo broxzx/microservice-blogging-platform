@@ -21,4 +21,28 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.FORBIDDEN)
                 .body(problemDetail);
     }
+
+    @ExceptionHandler(MessageNotFoundException.class)
+    public ResponseEntity<ProblemDetail> messageNotFoundExceptionHandler(MessageNotFoundException exception) {
+        ProblemDetail problemDetail = ProblemDetail
+                .forStatusAndDetail(HttpStatus.NOT_FOUND, "message was not found");
+
+        problemDetail.setProperty("errors", exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(problemDetail);
+    }
+
+    @ExceptionHandler(TokenIsInvalidException.class)
+    public ResponseEntity<ProblemDetail> tokenIsInvalidExceptionHandler(TokenIsInvalidException exception) {
+        ProblemDetail problemDetail = ProblemDetail
+                .forStatusAndDetail(HttpStatus.UNAUTHORIZED, "your token is invalid");
+
+        problemDetail.setProperty("errors", exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(problemDetail);
+    }
 }

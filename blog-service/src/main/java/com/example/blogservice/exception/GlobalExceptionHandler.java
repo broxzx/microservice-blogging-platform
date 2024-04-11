@@ -36,12 +36,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TokenIsInvalidException.class)
     public ResponseEntity<ProblemDetail> tokenIsInvalidExceptionHandler(TokenIsInvalidException exception) {
         ProblemDetail problemDetail = ProblemDetail
-                .forStatusAndDetail(HttpStatus.BAD_REQUEST, "token was whether invalid or absent");
+                .forStatusAndDetail(HttpStatus.UNAUTHORIZED, "token was whether invalid or absent");
 
         problemDetail.setProperty("errors", exception.getMessage());
 
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(problemDetail);
     }
 

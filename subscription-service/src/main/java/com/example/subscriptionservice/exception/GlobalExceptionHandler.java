@@ -12,12 +12,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ProblemDetail> subscriptionNotFoundExceptionHandler(NotFoundException exception) {
         ProblemDetail problemDetail = ProblemDetail
-                .forStatusAndDetail(HttpStatus.NOT_FOUND, "such element wasn't found");
+                .forStatusAndDetail(HttpStatus.UNAUTHORIZED, "such element wasn't found");
 
         problemDetail.setProperty("errors", exception.getMessage());
 
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(problemDetail);
     }
 }

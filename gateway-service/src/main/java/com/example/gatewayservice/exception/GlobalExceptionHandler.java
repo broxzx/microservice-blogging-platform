@@ -14,25 +14,25 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TokenIsNotValidException.class)
     public ResponseEntity<ProblemDetail> handleTokenIsNotValidException(TokenIsNotValidException exception) {
         ProblemDetail problemDetail = ProblemDetail
-                .forStatusAndDetail(HttpStatus.BAD_REQUEST,
+                .forStatusAndDetail(HttpStatus.UNAUTHORIZED,
                         "token is not valid. try to retake token by making a request to the http://localhost:8080/security/login");
         problemDetail.setProperty("errors", exception.getMessage());
 
         return ResponseEntity
-                .badRequest()
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(problemDetail);
     }
 
     @ExceptionHandler(TokenIsAbsentException.class)
     public ResponseEntity<ProblemDetail> handleTokenIsAbsentException(TokenIsAbsentException exception) {
         ProblemDetail problemDetail = ProblemDetail
-                .forStatusAndDetail(HttpStatus.BAD_REQUEST,
+                .forStatusAndDetail(HttpStatus.UNAUTHORIZED,
                         "jwt token is missing. try to make a request to the http://localhost:8080/security/login");
 
         problemDetail.setProperty("errors", exception.getMessage());
 
         return ResponseEntity
-                .badRequest()
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(problemDetail);
     }
 

@@ -1,5 +1,6 @@
 package com.messageservice.messageservice.service;
 
+import com.messageservice.messageservice.exception.TokenIsInvalidException;
 import com.messageservice.messageservice.model.UserModelResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class UserService {
         if (token != null && token.startsWith("Bearer ")) {
             userToken = token.substring(7);
         } else {
-            userToken = null;
+            throw new TokenIsInvalidException("token is either absent or invalid. please login by using 'http://localhost:8080/security/login'");
         }
 
         UserModelResponse userModelResponse = webClient

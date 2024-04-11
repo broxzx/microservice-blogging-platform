@@ -4,6 +4,7 @@ import com.example.subscriptionservice.dto.SubscriptionRequest;
 import com.example.subscriptionservice.dto.SubscriptionResponse;
 import com.example.subscriptionservice.entity.SubscriptionEntity;
 import com.example.subscriptionservice.service.SubscriptionService;
+import com.example.subscriptionservice.utils.SubscriptionResponseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ import java.util.List;
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
+
+    private final SubscriptionResponseMapper subscriptionResponseMapper;
 
     private static final String FIND_ALL_SUBSCRIBERS = "/subscribers/{blogId}";
     private static final String FIND_ALL_USERS_SUBSCRIPTION = "/subscriptions/{userId}";
@@ -60,10 +63,7 @@ public class SubscriptionController {
     public ResponseEntity<SubscriptionResponse> createSubscription(@RequestBody SubscriptionRequest subscriptionRequest) {
         SubscriptionEntity subscriptionEntity = subscriptionService.saveSubscriptionAndSendNotification(subscriptionRequest);
 
-        SubscriptionResponse response = SubscriptionResponse.builder()
-                .blogName(subscriptionEntity.getBlogName())
-                .username(subscriptionEntity.getUsername())
-                .build();
+        SubscriptionResponse response = subscriptionResponseMapper.makeSubscriptionResponse(subscriptionEntity);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -79,10 +79,7 @@ public class SubscriptionController {
 
         subscriptionService.saveSubscriptionAndSendNotification(updatedSubscriptionEntity);
 
-        SubscriptionResponse response = SubscriptionResponse.builder()
-                .username(updatedSubscriptionEntity.getUsername())
-                .blogName(updatedSubscriptionEntity.getBlogName())
-                .build();
+        SubscriptionResponse response = subscriptionResponseMapper.makeSubscriptionResponse(updatedSubscriptionEntity);
 
         return ResponseEntity
                 .ok(response);
@@ -90,12 +87,12 @@ public class SubscriptionController {
 
 
     @DeleteMapping(DELETE_SUBSCRIPTION)
-    public ResponseEntity<String> deleteSubscriptionById(@PathVariable Long subscriptionId) {
-        subscriptionService.getSubscriptionById(subscriptionId);
+    public ResponseEntity<SubscriptionResponse> deleteSubscriptionById(@PathVariable Long subscriptionId) {
+        SubscriptionEntity subscriptionEntity = subscriptionService.getSubscriptionById(subscriptionId);
 
         subscriptionService.deleteSubscriptionById(subscriptionId);
 
         return ResponseEntity
-                .ok("subscription with id '%d' was deleted".formatted(subscriptionId));
+                .ok(subscriptionResponseMapper.makeSubscriptionResponse(subscriptionEntity));
     }
 }

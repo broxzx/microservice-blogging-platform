@@ -27,6 +27,7 @@
         <module>eureka-discovery-server</module>
         <module>gateway-service</module>
         <module>notification-service</module>
+        <module>message-service</module>
     </modules>
 
     <packaging>pom</packaging>

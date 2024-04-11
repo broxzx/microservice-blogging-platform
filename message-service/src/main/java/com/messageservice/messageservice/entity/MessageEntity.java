@@ -1,4 +1,4 @@
-package com.example.blogservice.entity;
+package com.messageservice.messageservice.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

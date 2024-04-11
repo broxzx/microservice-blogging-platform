@@ -1,4 +1,4 @@
-package com.example.blogservice.dto;
+package com.messageservice.messageservice.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,4 +8,6 @@ import lombok.NoArgsConstructor;
 public class MessageRequestDto {
 
     private String content;
+
+    private Long blogId;
 }

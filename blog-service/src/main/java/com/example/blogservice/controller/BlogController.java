@@ -13,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -74,7 +73,6 @@ public class BlogController {
                 .title(blogRequest.getTitle())
                 .description(blogRequest.getDescription())
                 .ownerId(userIdByUsername)
-                .messages(new ArrayList<>())
                 .build();
 
         blogService.save(createdBlogEntity);
@@ -92,9 +90,10 @@ public class BlogController {
         blogService.save(foundBlogEntity);
 
         BlogResponseDto blogResponse = BlogResponseDto.builder()
+                .id(foundBlogEntity.getId())
                 .title(foundBlogEntity.getTitle())
                 .description(foundBlogEntity.getDescription())
-                .messages(foundBlogEntity.getMessages())
+                .ownerId(foundBlogEntity.getOwnerId())
                 .build();
 
         return ResponseEntity
@@ -112,7 +111,6 @@ public class BlogController {
                 .title(foundBlogEntity.getTitle())
                 .description(foundBlogEntity.getDescription())
                 .ownerId(foundBlogEntity.getOwnerId())
-                .messages(foundBlogEntity.getMessages())
                 .build();
 
         return ResponseEntity

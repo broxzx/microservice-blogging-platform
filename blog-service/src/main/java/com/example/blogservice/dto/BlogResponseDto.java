@@ -1,6 +1,5 @@
 package com.example.blogservice.dto;
 
-import com.example.blogservice.entity.MessageEntity;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,5 +17,5 @@ public class BlogResponseDto {
 
     private String ownerId;
 
-    private List<MessageEntity> messages;
+    private List<Long> messagesId;
 }

@@ -1,6 +1,6 @@
-package com.example.blogservice.repository;
+package com.messageservice.messageservice.repository;
 
-import com.example.blogservice.entity.MessageEntity;
+import com.messageservice.messageservice.entity.MessageEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

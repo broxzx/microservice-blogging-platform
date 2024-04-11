@@ -28,7 +28,7 @@ public class UserService {
         String username = jwtTokenUtils.getUsername(token);
         UserModelResponse userModelResponse = webClient
                 .get()
-                .uri("http://localhost:8080/user", uriBuilder -> uriBuilder
+                .uri("http://localhost:8080/user/by-username", uriBuilder -> uriBuilder
                         .queryParam("username", username)
                         .build())
                 .retrieve()

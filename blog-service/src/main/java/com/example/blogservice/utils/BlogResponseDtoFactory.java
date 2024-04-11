@@ -12,7 +12,6 @@ public class BlogResponseDtoFactory {
                 .id(blog.getId())
                 .title(blog.getTitle())
                 .description(blog.getDescription())
-                .messages(blog.getMessages())
                 .ownerId(blog.getOwnerId())
                 .build();
     }

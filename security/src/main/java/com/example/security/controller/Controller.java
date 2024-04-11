@@ -62,10 +62,10 @@ public class Controller {
         return ResponseEntity.ok(jwtUserResponse);
     }
 
-    @GetMapping(VALIDATE)
-    public ResponseEntity<String> validateToken(@RequestParam String token) {
-        jwtTokenProvider.validate(token);
-
-        return ResponseEntity.ok("token is valid!");
-    }
+//    @GetMapping(VALIDATE)
+//    public ResponseEntity<String> validateToken(@RequestParam String token) {
+//        jwtTokenProvider.validate(token);
+//
+//        return ResponseEntity.ok("token is valid!");
+//    }
 }

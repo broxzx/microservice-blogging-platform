@@ -8,8 +8,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -29,7 +27,4 @@ public class BlogEntity {
 
     private String ownerId;
 
-//    private List<Long> messageId;
-
-    private List<MessageEntity> messages;
 }

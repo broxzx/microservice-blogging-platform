@@ -37,7 +37,7 @@ spring:
         - id: message-service
           uri: lb://message-service
           predicates:
-            - Path=/message/**
+            - Path=/messages/**
 
 #jwt-security
 jwt:

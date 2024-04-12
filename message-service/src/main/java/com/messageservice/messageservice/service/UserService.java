@@ -12,7 +12,7 @@ public class UserService {
 
     private final WebClient webClient;
 
-    public UserModelResponse getUserModelById(String token) {
+    public UserModelResponse getUserModelByToken(String token) {
         String userToken;
         if (token != null && token.startsWith("Bearer ")) {
             userToken = token.substring(7);

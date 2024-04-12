@@ -77,7 +77,7 @@ public class MessageController {
     @PostMapping(CREATE_MESSAGE_IN_BLOG)
     public ResponseEntity<MessageResponseDto> createMessageEntity(@RequestBody MessageRequestDto messageRequest,
                                                                   @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        UserModelResponse userModel = userService.getUserModelById(token);
+        UserModelResponse userModel = userService.getUserModelByToken(token);
 
         MessageEntity messageEntity = MessageEntity.builder()
                 .id(sequenceGeneratorService.generateSequence(SEQUENCE_NAME))

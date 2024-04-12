@@ -63,7 +63,7 @@ public class BlogController {
     }
 
     @PostMapping(CREATE_BLOG)
-    public ResponseEntity<String> createBlog(@RequestBody BlogRequestDto blogRequest, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+    public ResponseEntity<BlogResponseDto> createBlog(@RequestBody BlogRequestDto blogRequest, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         token = userService.verifyToken(token);
 
         String userIdByUsername = userService.findUserIdByJwtToken(token);
@@ -77,8 +77,10 @@ public class BlogController {
 
         blogService.save(createdBlogEntity);
 
+        BlogResponseDto response = blogResponseDtoFactory.makeBlogResponseDto(createdBlogEntity);
+
         return ResponseEntity
-                .ok("blog with id '%d' was created".formatted(createdBlogEntity.getId()));
+                .ok(response);
     }
 
     @PutMapping(UPDATE_BLOG_BY_ID)
@@ -89,12 +91,7 @@ public class BlogController {
 
         blogService.save(foundBlogEntity);
 
-        BlogResponseDto blogResponse = BlogResponseDto.builder()
-                .id(foundBlogEntity.getId())
-                .title(foundBlogEntity.getTitle())
-                .description(foundBlogEntity.getDescription())
-                .ownerId(foundBlogEntity.getOwnerId())
-                .build();
+        BlogResponseDto blogResponse = blogResponseDtoFactory.makeBlogResponseDto(foundBlogEntity);
 
         return ResponseEntity
                 .ok(blogResponse);
@@ -106,12 +103,7 @@ public class BlogController {
 
         blogService.deleteById(id);
 
-        BlogResponseDto response = BlogResponseDto.builder()
-                .id(foundBlogEntity.getId())
-                .title(foundBlogEntity.getTitle())
-                .description(foundBlogEntity.getDescription())
-                .ownerId(foundBlogEntity.getOwnerId())
-                .build();
+        BlogResponseDto response = blogResponseDtoFactory.makeBlogResponseDto(foundBlogEntity);
 
         return ResponseEntity
                 .ok(response);

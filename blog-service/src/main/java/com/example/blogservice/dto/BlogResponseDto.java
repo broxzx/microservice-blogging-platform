@@ -3,8 +3,6 @@ package com.example.blogservice.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @Builder
 public class BlogResponseDto {
@@ -17,5 +15,4 @@ public class BlogResponseDto {
 
     private String ownerId;
 
-    private List<Long> messagesId;
 }

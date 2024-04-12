@@ -15,33 +15,62 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfiguration {
 
-    @Value("${rabbitmq.queue}")
-    private String queueName;
+    //subscriber queue adjustment
+    @Value("${rabbitmq.queue-subscriber}")
+    private String queueSubscriberName;
+
+    @Value("${rabbitmq.exchange-subscriber}")
+    private String exchangeSubscriberName;
+
+    @Value("${rabbitmq.routing-key-subscriber}")
+    private String routingSubscriberKey;
 
 
-    @Value("${rabbitmq.exchange}")
-    private String exchangeName;
+    //owner queue adjustment
+    @Value("${rabbitmq.queue-owner}")
+    private String queueOwnerName;
 
-    @Value("${rabbitmq.routing-key}")
-    private String routingKey;
+    @Value("${rabbitmq.exchange-owner}")
+    private String exchangeOwnerName;
+
+    @Value("${rabbitmq.routing-key-owner}")
+    private String routingOwnerKey;
 
 
     @Bean
-    public Queue queue() {
-        return new Queue(queueName);
+    public Queue queueSubscriber() {
+        return new Queue(queueSubscriberName);
     }
 
     @Bean
-    public TopicExchange exchange() {
-        return new TopicExchange(exchangeName);
+    public TopicExchange exchangeSubscriber() {
+        return new TopicExchange(exchangeSubscriberName);
     }
 
     @Bean
-    public Binding binding() {
+    public Binding bindingSubscriber() {
         return BindingBuilder
-                .bind(queue())
-                .to(exchange())
-                .with(routingKey);
+                .bind(queueSubscriber())
+                .to(exchangeSubscriber())
+                .with(routingSubscriberKey);
+    }
+
+    @Bean
+    public Queue queueOwner() {
+        return new Queue(queueOwnerName);
+    }
+
+    @Bean
+    public TopicExchange exchangeOwner() {
+        return new TopicExchange(exchangeOwnerName);
+    }
+
+    @Bean
+    public Binding bindingOwner() {
+        return BindingBuilder
+                .bind(queueOwner())
+                .to(exchangeOwner())
+                .with(routingOwnerKey);
     }
 
 

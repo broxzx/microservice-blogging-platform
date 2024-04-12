@@ -45,7 +45,7 @@ public class SubscriptionService {
                 );
     }
 
-    public void saveSubscriptionAndSendNotification(SubscriptionEntity subscriptionEntity) {
+    public void saveSubscription(SubscriptionEntity subscriptionEntity) {
         subscriptionRepository.save(subscriptionEntity);
     }
 
@@ -60,7 +60,7 @@ public class SubscriptionService {
 
         log.info(userModelResponse);
 
-        SubscriptionEntity builtUser = SubscriptionEntity.builder()
+        SubscriptionEntity subscriptionEntity = SubscriptionEntity.builder()
                 .id(sequenceGeneratorService.generateSequence(SEQUENCE_NAME))
                 .blogId(subscriptionRequest.getBlogId())
                 .userId(subscriptionRequest.getUserId())
@@ -68,17 +68,35 @@ public class SubscriptionService {
                 .blogName(blogModelResponse.title())
                 .build();
 
-        subscriptionRepository.save(builtUser);
+        subscriptionRepository.save(subscriptionEntity);
 
         NotificationModel notificationModel = NotificationModel.builder()
-                .username(builtUser.getUsername())
-                .blogTitle(builtUser.getBlogName())
+                .username(subscriptionEntity.getUsername())
+                .blogTitle(subscriptionEntity.getBlogName())
                 .email(userModelResponse.email())
                 .build();
 
-        rabbitMQNotificationProducer.sendNotification(notificationModel);
+        rabbitMQNotificationProducer.sendNotificationToSubscriber(notificationModel);
+        sendNotificationToBlogOwner(blogModelResponse.ownerId(), blogModelResponse.title());
 
-        return builtUser;
+        return subscriptionEntity;
+    }
+
+    private void sendNotificationToBlogOwner(String userId, String blogTitle) {
+        UserModelResponse response = webClient
+                .get()
+                .uri("http://localhost:8080/user/%s".formatted(userId))
+                .retrieve()
+                .bodyToMono(UserModelResponse.class)
+                .block();
+
+        NotificationModel notificationModel = NotificationModel.builder()
+                .username(response.username())
+                .email(response.email())
+                .blogTitle(blogTitle)
+                .build();
+
+        rabbitMQNotificationProducer.sendNotificationToBlogOwner(notificationModel);
     }
 
     public SubscriptionEntity updateSubscription(SubscriptionEntity subscriptionEntity, SubscriptionRequest subscriptionRequest) {

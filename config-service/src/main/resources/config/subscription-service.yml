@@ -11,9 +11,13 @@ spring:
 
 #rabbit-variables
 rabbitmq:
-  queue: notifications-queue
-  routing-key: notification.push
-  exchange: notification-exchange
+  queue-subscriber: notifications-queue-subscriber
+  routing-key-subscriber: notifications-subscriber.push-subscriber
+  exchange-subscriber: notifications-exchange-subscriber
+
+  routing-key-owner: notifications-owner.push
+  queue-owner: notifications-queue-owner
+  exchange-owner: notifications-exchange-owner
 
 #eureka
 eureka:

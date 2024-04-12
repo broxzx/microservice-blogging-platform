@@ -77,7 +77,7 @@ public class SubscriptionController {
 
         SubscriptionEntity updatedSubscriptionEntity = subscriptionService.updateSubscription(foundSubscriptionById, request);
 
-        subscriptionService.saveSubscriptionAndSendNotification(updatedSubscriptionEntity);
+        subscriptionService.saveSubscriptionAndSendNotification(request);
 
         SubscriptionResponse response = subscriptionResponseMapper.makeSubscriptionResponse(updatedSubscriptionEntity);
 

@@ -6,9 +6,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+/**
+ * Global exception handler class to handle various exceptions that may occur in the application.
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Exception handler method that handles BlogNotFoundException.
+     *
+     * @param blogNotFoundException the exception to handle
+     * @return a ResponseEntity containing the detailed problem for the exception
+     */
     @ExceptionHandler(BlogNotFoundException.class)
     public ResponseEntity<ProblemDetail> blogNotFoundExceptionHandler(BlogNotFoundException blogNotFoundException) {
         ProblemDetail problemDetail = ProblemDetail
@@ -21,6 +30,12 @@ public class GlobalExceptionHandler {
                 .body(problemDetail);
     }
 
+    /**
+     * Exception handler method that handles UserNotFoundException.
+     *
+     * @param exception the exception to handle
+     * @return a ResponseEntity containing the detailed problem for the exception
+     */
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ProblemDetail> userNotFoundExceptionHandler(UserNotFoundException exception) {
         ProblemDetail problemDetail = ProblemDetail
@@ -33,6 +48,12 @@ public class GlobalExceptionHandler {
                 .body(problemDetail);
     }
 
+    /**
+     * Exception handler method that handles TokenIsInvalidException.
+     *
+     * @param exception the exception to handle
+     * @return a ResponseEntity containing the detailed problem for the exception
+     */
     @ExceptionHandler(TokenIsInvalidException.class)
     public ResponseEntity<ProblemDetail> tokenIsInvalidExceptionHandler(TokenIsInvalidException exception) {
         ProblemDetail problemDetail = ProblemDetail
@@ -45,6 +66,12 @@ public class GlobalExceptionHandler {
                 .body(problemDetail);
     }
 
+    /**
+     * Handles the AccessDeniedException and returns a ResponseEntity with the appropriate problem detail.
+     *
+     * @param accessDeniedException the AccessDeniedException to handle
+     * @return a ResponseEntity containing the detailed problem for the exception
+     */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ProblemDetail> handleAccessDeniedException(AccessDeniedException accessDeniedException) {
         ProblemDetail problemDetail = ProblemDetail

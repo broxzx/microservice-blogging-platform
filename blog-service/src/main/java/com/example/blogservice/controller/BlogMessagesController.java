@@ -15,6 +15,9 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.Objects;
 
+/**
+ * Controller class for handling blog message requests.
+ */
 @RestController
 @RequestMapping("blog/messages/{blogId}")
 @RequiredArgsConstructor
@@ -26,6 +29,12 @@ public class BlogMessagesController {
 
     private static final String GET_ALL_MESSAGES_BY_ID = "/";
 
+    /**
+     * Retrieves all messages by blog ID.
+     *
+     * @param blogId The ID of the blog to retrieve messages for.
+     * @return ResponseEntity<MessageModelResponse[]> A response entity containing an array of message models.
+     */
     @GetMapping(GET_ALL_MESSAGES_BY_ID)
     public ResponseEntity<MessageModelResponse[]> getAllMessagesByBlogId(@PathVariable Long blogId) {
         Span messageEntityLookUp = tracer.nextSpan().name("Message Entity LookUp");

@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * The BlogFilterAspect class is an aspect that filters the list of blogs based on the user's role and ownership.
+ */
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -32,6 +35,13 @@ public class BlogFilterAspect {
     private final UserService userService;
 
 
+    /**
+     * Filters the list of blogs based on the user's role and ownership.
+     *
+     * @param joinPoint The join point representing the getAllBlogs() method in BlogController.
+     * @return The filtered list of BlogResponseDto objects.
+     * @throws Throwable if an error occurs during the execution of the join point.
+     */
     @Around("""
                 execution(* com.example.blogservice.controller.BlogController.getAllBlogs()) && @annotation(org.springframework.web.bind.annotation.GetMapping))
             """)
@@ -59,6 +69,13 @@ public class BlogFilterAspect {
         }
     }
 
+    /**
+     * Method to check access for the getBlogById API endpoint.
+     *
+     * @param proceedingJoinPoint The ProceedingJoinPoint object representing the method execution join point.
+     * @return The ResponseEntity object containing the BlogResponseDto.
+     * @throws Throwable if an error occurs during the execution of the join point.
+     */
     @Around("""
                     execution(* com.example.blogservice.controller.BlogController.getBlogById(Long)) && @annotation(org.springframework.web.bind.annotation.GetMapping)
             """)
@@ -87,6 +104,15 @@ public class BlogFilterAspect {
         }
     }
 
+    /**
+     * Checks access for the updateBlogEntity and deleteBlogById methods in the BlogController.
+     * It validates the user's role and ownership of the blog.
+     *
+     * @param joinPoint The ProceedingJoinPoint object representing the method execution join point.
+     * @param id        The id of the blog entity.
+     * @return The ResponseEntity object containing the BlogResponseDto.
+     * @throws Throwable if an error occurs during the execution of the join point or if access is denied.
+     */
     @Around("""
                     execution(* com.example.blogservice.controller.BlogController.updateBlogEntity(Long, com.example.blogservice.dto.BlogRequestDto))
                      && args(id, com.example.blogservice.dto.BlogRequestDto) && @annotation(org.springframework.web.bind.annotation.PutMapping) ||
@@ -106,6 +132,11 @@ public class BlogFilterAspect {
         return (ResponseEntity<BlogResponseDto>) joinPoint.proceed();
     }
 
+    /**
+     * Retrieves user information based on the token from the request's authorization header.
+     *
+     * @return The response containing the user information.
+     */
     private UserModelResponse getUserByToken() {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 

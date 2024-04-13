@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The BlogController class handles the REST API endpoints for managing blog resources.
+ */
 @RestController
 @RequestMapping("blog")
 @RequiredArgsConstructor
@@ -37,6 +40,13 @@ public class BlogController {
     private static final String DELETE_BLOG_BY_ID = "/{id}";
 
 
+    /**
+     * Retrieves all blogs from the system.
+     *
+     * @return A ResponseEntity object containing the list of BlogResponseDto objects.
+     *         The response has a status code of 200 (OK) if the blogs are successfully retrieved.
+     *         Otherwise, an error response is returned.
+     */
     @GetMapping(GET_ALL_BLOGS)
     public ResponseEntity<List<BlogResponseDto>> getAllBlogs() {
         List<BlogEntity> blogs = blogService.findAll();
@@ -49,6 +59,12 @@ public class BlogController {
                 .ok(response);
     }
 
+    /**
+     * Retrieves a blog by its ID.
+     *
+     * @param id the ID of the blog to retrieve
+     * @return a ResponseEntity containing the BlogResponseDto representing the retrieved blog
+     */
     @GetMapping(GET_BLOG_BY_ID)
     public ResponseEntity<BlogResponseDto> getBlogById(@PathVariable Long id) {
         BlogEntity foundBlogEntity = blogService.findById(id);
@@ -61,6 +77,13 @@ public class BlogController {
                 .ok(response);
     }
 
+    /**
+     * Creates a new blog.
+     *
+     * @param blogRequest the object representing the blog to be created
+     * @param token the authorization token
+     * @return the response entity containing the created blog
+     */
     @PostMapping(CREATE_BLOG)
     public ResponseEntity<BlogResponseDto> createBlog(@RequestBody BlogRequestDto blogRequest, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         token = userService.verifyToken(token);
@@ -82,6 +105,13 @@ public class BlogController {
                 .ok(response);
     }
 
+    /**
+     * Updates a blog entity with the provided blog request data.
+     *
+     * @param id           The ID of the blog entity to update.
+     * @param blogRequest  The blog request data to update the entity.
+     * @return The updated blog response DTO wrapped in a ResponseEntity.
+     */
     @PutMapping(UPDATE_BLOG_BY_ID)
     public ResponseEntity<BlogResponseDto> updateBlogEntity(@PathVariable Long id, @RequestBody BlogRequestDto blogRequest) {
         BlogEntity foundBlogEntity = blogService.findById(id);
@@ -96,6 +126,12 @@ public class BlogController {
                 .ok(blogResponse);
     }
 
+    /**
+     * Deletes a blog by its ID.
+     *
+     * @param id the ID of the blog to delete
+     * @return a ResponseEntity with the BlogResponseDto of the deleted blog
+     */
     @DeleteMapping(DELETE_BLOG_BY_ID)
     public ResponseEntity<BlogResponseDto> deleteBlogById(@PathVariable Long id) {
         BlogEntity foundBlogEntity = blogService.findById(id);

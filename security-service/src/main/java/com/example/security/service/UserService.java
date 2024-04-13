@@ -24,9 +24,9 @@ public class UserService {
     private final UserDtoMapper userDtoMapper;
 
     @Transactional
-    public UserEntity saveUser(UserEntity user) {
+    public void saveUser(UserEntity user) {
         user.setPassword(encoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     @Transactional

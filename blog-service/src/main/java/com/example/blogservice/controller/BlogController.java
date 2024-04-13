@@ -45,7 +45,6 @@ public class BlogController {
                 .stream()
                 .map(blogResponseDtoFactory::makeBlogResponseDto)
                 .toList();
-
         return ResponseEntity
                 .ok(response);
     }

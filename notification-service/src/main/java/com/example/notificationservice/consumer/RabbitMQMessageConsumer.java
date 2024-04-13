@@ -11,6 +11,10 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * RabbitMQMessageConsumer is a class that consumes messages from RabbitMQ and sends emails to subscribers and blog owners.
+ * It listens to two queues: one for subscribers and one for owners.
+ */
 @Component
 @Log4j2
 public class RabbitMQMessageConsumer {
@@ -21,6 +25,11 @@ public class RabbitMQMessageConsumer {
         this.senderService = activated ? emailSenderService : null;
     }
 
+    /**
+     * Sends an email notification to a subscriber.
+     *
+     * @param notification The notification containing the subscriber's username, blog title, and email.
+     */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "${rabbitmq.queue-subscriber}", durable = "true"),
             exchange = @Exchange(value = "${rabbitmq.exchange-subscriber}", type = ExchangeTypes.TOPIC),
@@ -36,6 +45,11 @@ public class RabbitMQMessageConsumer {
         log.info("Received notification for subscriber: {}", notification);
     }
 
+    /**
+     * Sends an email notification to the owner of a blog.
+     *
+     * @param notification The notification model containing the owner's username, blog title, and email.
+     */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "${rabbitmq.queue-owner}", durable = "true"),
             exchange = @Exchange(value = "${rabbitmq.exchange-owner}", type = ExchangeTypes.TOPIC),

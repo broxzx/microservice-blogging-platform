@@ -23,6 +23,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Objects;
 
+/**
+ * Aspect class for filtering messages based on access control.
+ */
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -32,6 +35,14 @@ public class MessageFilterAspect {
 
     private final WebClient webClient;
 
+    /**
+     * Checks access to delete a message entity by ID.
+     *
+     * @param joinPoint The join point of the method.
+     * @param messageId The ID of the message entity to delete.
+     * @return The response entity containing the deleted message response DTO.
+     * @throws Throwable Throws an AccessDeniedException if the user does not have access to delete the message.
+     */
     @Around(value = """
             execution(* com.messageservice.messageservice.controller.MessageController.deleteMessageEntityById(Long))
             && @annotation(org.springframework.web.bind.annotation.DeleteMapping)
@@ -55,6 +66,15 @@ public class MessageFilterAspect {
         return response;
     }
 
+    /**
+     * Checks if the user has access to update a message entity.
+     *
+     * @param joinPoint           The join point of the method.
+     * @param messageId           The ID of the message entity to update.
+     * @param messageRequestDto   The updated message request DTO.
+     * @return The response entity containing the updated message response DTO.
+     * @throws Throwable         Throws an AccessDeniedException if the user does not have access to update the message.
+     */
     @Around(value = """
             execution(* com.messageservice.messageservice.controller.MessageController
             .updateMessageEntity(Long, com.messageservice.messageservice.dto.MessageRequestDto))
@@ -76,6 +96,12 @@ public class MessageFilterAspect {
         return response;
     }
 
+    /**
+     * Retrieves a UserModelResponse by token.
+     *
+     * @param token The token used to retrieve the UserModelResponse.
+     * @return The UserModelResponse retrieved from the server.
+     */
     private UserModelResponse getUserModelResponseByToken(String token) {
         String userToken = token.substring(7);
 
@@ -92,6 +118,12 @@ public class MessageFilterAspect {
         return response;
     }
 
+    /**
+     * Retrieves the authorization header from the current HTTP request.
+     *
+     * @return The authorization header as a string.
+     * @throws TokenIsInvalidException if the token is missing or invalid.
+     */
     private String getAuthorizationHeader() {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
@@ -104,6 +136,12 @@ public class MessageFilterAspect {
         }
     }
 
+    /**
+     * Returns a BlogModelResponse object by its id.
+     *
+     * @param id The id of the blog model response to retrieve.
+     * @return The BlogModelResponse object corresponding to the given id.
+     */
     private BlogModelResponse getBlogModelResponseById(String id) {
         BlogModelResponse response = webClient
                 .get()

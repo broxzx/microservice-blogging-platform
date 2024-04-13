@@ -11,6 +11,9 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.Objects;
 
+/**
+ * The UserService class provides methods for retrieving user information.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -19,6 +22,13 @@ public class UserService {
 
     private final Tracer tracer;
 
+    /**
+     * Retrieves the user model by the provided token.
+     *
+     * @param token The authentication token.
+     * @return The UserModelResponse representing the user model.
+     * @throws TokenIsInvalidException if the token is absent or invalid.
+     */
     public UserModelResponse getUserModelByToken(String token) {
         Span userEntityLookUp = tracer.nextSpan().name("User Entity LookUp");
 

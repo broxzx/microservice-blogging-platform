@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Rest Controller for managing messages.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("messages")
@@ -39,6 +42,12 @@ public class MessageController {
     private static final String DELETE_MESSAGE_BY_ID = "/{messageId}";
 
 
+    /**
+     * Retrieves all messages in a blog.
+     *
+     * @param blogId The ID of the blog.
+     * @return ResponseEntity containing a list of MessageResponseDto objects.
+     */
     @GetMapping(GET_ALL_MESSAGES_BY_BLOG_ID)
     public ResponseEntity<List<MessageResponseDto>> getAllMessagesInBlog(@PathVariable Long blogId) {
         List<MessageEntity> messageEntityById = messageService.getMessageEntitiesByBlogId(blogId);
@@ -52,6 +61,12 @@ public class MessageController {
                 .ok(response);
     }
 
+    /**
+     * Retrieves a message entity by its ID.
+     *
+     * @param messageId The ID of the message entity.
+     * @return ResponseEntity containing the MessageResponseDto of the message entity.
+     */
     @GetMapping(GET_MESSAGE_BY_ID)
     public ResponseEntity<MessageResponseDto> findMessageEntityById(@PathVariable Long messageId) {
         MessageEntity messageEntityById = messageService.getMessageEntityById(messageId);
@@ -62,6 +77,11 @@ public class MessageController {
                 .ok(response);
     }
 
+    /**
+     * Retrieves all messages in the system.
+     *
+     * @return ResponseEntity containing a list of MessageResponseDto objects.
+     */
     @GetMapping(GET_ALL_MESSAGES)
     public ResponseEntity<List<MessageResponseDto>> getAllMessages() {
         List<MessageEntity> allMessages = messageService.getAllMessages();
@@ -74,6 +94,13 @@ public class MessageController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Creates a new message entity in the blog.
+     *
+     * @param messageRequest The request object containing the message content and blog ID.
+     * @param token          The authorization token.
+     * @return ResponseEntity containing the created MessageResponseDto.
+     */
     @PostMapping(CREATE_MESSAGE_IN_BLOG)
     public ResponseEntity<MessageResponseDto> createMessageEntity(@RequestBody MessageRequestDto messageRequest,
                                                                   @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
@@ -95,6 +122,13 @@ public class MessageController {
                 .ok(response);
     }
 
+    /**
+     * Updates a message entity with the specified ID using the provided message request DTO.
+     *
+     * @param messageId         The ID of the message entity to update.
+     * @param messageRequestDto The message request DTO containing the updated message data.
+     * @return A ResponseEntity containing MessageResponseDto representing the updated message entity.
+     */
     @PutMapping(UPDATE_MESSAGE_BY_ID)
     public ResponseEntity<MessageResponseDto> updateMessageEntity(@PathVariable Long messageId,
                                                                   @RequestBody MessageRequestDto messageRequestDto) {
@@ -108,6 +142,12 @@ public class MessageController {
                 .ok(messageResponseDtoFactory.makeMessageResponseDto(messageEntityById));
     }
 
+    /**
+     * Deletes a message entity by its ID.
+     *
+     * @param messageId The ID of the message entity to delete.
+     * @return A ResponseEntity containing the MessageResponseDto of the deleted message entity.
+     */
     @DeleteMapping(DELETE_MESSAGE_BY_ID)
     public ResponseEntity<MessageResponseDto> deleteMessageEntityById(@PathVariable Long messageId) {
         MessageEntity messageEntity = messageService.getMessageEntityById(messageId);

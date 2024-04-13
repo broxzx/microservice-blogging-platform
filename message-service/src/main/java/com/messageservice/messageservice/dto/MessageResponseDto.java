@@ -5,6 +5,10 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents a data transfer object (DTO) for a message response.
+ * It contains the information related to a message, such as its ID,
+ */
 @Data
 @Builder
 public class MessageResponseDto {

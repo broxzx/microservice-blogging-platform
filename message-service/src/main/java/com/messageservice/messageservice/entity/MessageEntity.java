@@ -10,6 +10,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+/**
+ * This class represents a message entity, which is used to store information about a message.
+ */
 @Document(collection = "messages")
 @AllArgsConstructor
 @NoArgsConstructor

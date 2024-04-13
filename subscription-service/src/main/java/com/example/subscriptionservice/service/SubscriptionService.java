@@ -8,6 +8,8 @@ import com.example.subscriptionservice.model.NotificationModel;
 import com.example.subscriptionservice.model.UserModelResponse;
 import com.example.subscriptionservice.producer.RabbitMQNotificationProducer;
 import com.example.subscriptionservice.repository.SubscriptionRepository;
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,8 @@ public class SubscriptionService {
 
     private final WebClient webClient;
 
+    private final Tracer tracer;
+
     private static final String SEQUENCE_NAME = "subscription_sequence";
 
 
@@ -51,12 +55,19 @@ public class SubscriptionService {
 
     public SubscriptionEntity saveSubscriptionAndSendNotification(SubscriptionRequest subscriptionRequest) {
         BlogModelResponse blogModelResponse = blogService.getBlogEntityById(subscriptionRequest.getBlogId());
-        UserModelResponse userModelResponse = webClient
-                .get()
-                .uri("http://localhost:8080/user/%d".formatted(subscriptionRequest.getUserId()))
-                .retrieve()
-                .bodyToMono(UserModelResponse.class)
-                .block();
+
+        UserModelResponse userModelResponse;
+        Span userEntityLookUp = tracer.nextSpan().name("User Entity LookUp");
+        try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
+            userModelResponse = webClient
+                    .get()
+                    .uri("http://localhost:8080/user/%d".formatted(subscriptionRequest.getUserId()))
+                    .retrieve()
+                    .bodyToMono(UserModelResponse.class)
+                    .block();
+        } finally {
+            userEntityLookUp.end();
+        }
 
         log.info(userModelResponse);
 
@@ -83,15 +94,22 @@ public class SubscriptionService {
     }
 
     private void sendNotificationToBlogOwner(String userId, String blogTitle) {
-        UserModelResponse response = webClient
-                .get()
-                .uri("http://localhost:8080/user/%s".formatted(userId))
-                .retrieve()
-                .bodyToMono(UserModelResponse.class)
-                .block();
+        Span userEntityLookUp = tracer.nextSpan().name("User Entity LookUp");
+
+        UserModelResponse response;
+        try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
+            response = webClient
+                    .get()
+                    .uri("http://localhost:8080/user/%s".formatted(userId))
+                    .retrieve()
+                    .bodyToMono(UserModelResponse.class)
+                    .block();
+        } finally {
+            userEntityLookUp.end();
+        }
 
         NotificationModel notificationModel = NotificationModel.builder()
-                .username(response.username())
+                .username(Objects.requireNonNull(response).username())
                 .email(response.email())
                 .blogTitle(blogTitle)
                 .build();
@@ -101,13 +119,21 @@ public class SubscriptionService {
 
     public SubscriptionEntity updateSubscription(SubscriptionEntity subscriptionEntity, SubscriptionRequest subscriptionRequest) {
         BlogModelResponse foundBlogEntity = blogService.getBlogEntityById(subscriptionRequest.getBlogId());
-        UserModelResponse userModelResponse = webClient
-                .get()
-                .uri("http://localhost:8080/user/%d".formatted(subscriptionRequest.getUserId()))
-                .retrieve()
-                .bodyToMono(UserModelResponse.class)
-                .block();
+        UserModelResponse userModelResponse;
 
+        Span userEntityLookUp = tracer.nextSpan().name("User Entity LookUp");
+
+
+        try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
+            userModelResponse = webClient
+                    .get()
+                    .uri("http://localhost:8080/user/%d".formatted(subscriptionRequest.getUserId()))
+                    .retrieve()
+                    .bodyToMono(UserModelResponse.class)
+                    .block();
+        } finally {
+            userEntityLookUp.end();
+        }
         log.info(userModelResponse);
 
         subscriptionEntity.setBlogId(foundBlogEntity.id());

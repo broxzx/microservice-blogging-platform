@@ -2,6 +2,8 @@ package com.example.subscriptionservice.service;
 
 import com.example.subscriptionservice.exception.TokenIsInvalidException;
 import com.example.subscriptionservice.model.BlogModelResponse;
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.Objects;
 
@@ -20,18 +23,32 @@ public class BlogService {
 
     private final WebClient webClient;
 
+    private final Tracer tracer;
+
     public BlogModelResponse getBlogEntityById(Long blogId) {
-        BlogModelResponse blogModelResponse = webClient
-                .get()
-                .uri("http://localhost:8080/blog/{id}", blogId)
-                .header(HttpHeaders.AUTHORIZATION, getUserToken())
-                .retrieve()
-                .bodyToMono(BlogModelResponse.class)
-                .block();
+        Span blogEntityLookUp = tracer.nextSpan().name("Blog Entity LookUp");
 
-        log.info(blogModelResponse);
+        try (Tracer.SpanInScope ignored = tracer.withSpan(blogEntityLookUp.start())) {
+            BlogModelResponse blogModelResponse = webClient
+                    .get()
+                    .uri("http://localhost:8080/blog/{id}", blogId)
+                    .header(HttpHeaders.AUTHORIZATION, getUserToken())
+                    .retrieve()
+                    .bodyToMono(BlogModelResponse.class)
+                    .subscribeOn(Schedulers.boundedElastic())
+                    .doOnEach(signal -> {
+                        if (signal.hasError()) {
+                            Objects.requireNonNull(tracer.currentSpan()).tag("error", Objects.requireNonNull(signal.getThrowable()).getMessage());
+                        }
+                    })
+                    .block();
 
-        return blogModelResponse;
+            log.info(blogModelResponse);
+
+            return blogModelResponse;
+        } finally {
+            blogEntityLookUp.end();
+        }
     }
 
     public String getUserToken() {

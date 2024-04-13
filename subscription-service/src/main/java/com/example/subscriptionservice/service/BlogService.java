@@ -16,6 +16,9 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.Objects;
 
+/**
+ * The BlogService class is responsible for retrieving a BlogModelResponse from a blog API by its ID and processing the user token.
+ */
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -25,6 +28,12 @@ public class BlogService {
 
     private final Tracer tracer;
 
+    /**
+     * Retrieves a BlogModelResponse from a blog API by its ID.
+     *
+     * @param blogId The ID of the blog entity.
+     * @return The retrieved BlogModelResponse object.
+     */
     public BlogModelResponse getBlogEntityById(Long blogId) {
         Span blogEntityLookUp = tracer.nextSpan().name("Blog Entity LookUp");
 
@@ -51,6 +60,12 @@ public class BlogService {
         }
     }
 
+    /**
+     * Retrieves the user token from the request's authorization header.
+     *
+     * @return The user token from the request's authorization header.
+     * @throws TokenIsInvalidException If the token is either invalid or absent.
+     */
     public String getUserToken() {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 

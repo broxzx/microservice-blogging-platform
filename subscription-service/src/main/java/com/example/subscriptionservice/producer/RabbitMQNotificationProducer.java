@@ -7,6 +7,10 @@ import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+/**
+ * RabbitMQNotificationProducer is a class responsible for sending notifications
+ * to subscribers and blog owners using RabbitMQ messaging.
+ */
 @RequiredArgsConstructor
 @Service
 @Log4j2
@@ -28,11 +32,20 @@ public class RabbitMQNotificationProducer {
 
     private final RabbitMessagingTemplate rabbitMessagingTemplate;
 
+    /**
+     * Sends a notification to a subscriber using RabbitMQ messaging.
+     *
+     * @param notificationModel The notification model to be sent.
+     */
     public void sendNotificationToSubscriber(NotificationModel notificationModel) {
         rabbitMessagingTemplate.convertAndSend(exchangeSubscriberName, routingSubscriberKey, notificationModel);
         log.info("{} sent notification to the subscriber", notificationModel);
     }
 
+    /**
+     * Sends a notification to the blog owner using RabbitMQ messaging.
+     * @param notificationModel The notification model to be sent.
+     */
     public void sendNotificationToBlogOwner(NotificationModel notificationModel) {
         rabbitMessagingTemplate.convertAndSend(exchangeOwnerName, routingOwnerKey, notificationModel);
 

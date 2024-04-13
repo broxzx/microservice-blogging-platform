@@ -8,6 +8,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * Represents a subscription entity that stores information about a user's subscription to a blog.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

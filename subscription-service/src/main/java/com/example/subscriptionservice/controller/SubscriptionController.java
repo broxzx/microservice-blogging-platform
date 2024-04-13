@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * The SubscriptionController class is responsible for handling HTTP requests related to subscriptions.
+ */
 @RestController
 @RequestMapping("subscription")
 @RequiredArgsConstructor
@@ -28,6 +31,12 @@ public class SubscriptionController {
     private static final String DELETE_SUBSCRIPTION = "/{subscriptionId}";
 
 
+    /**
+     * Retrieves all the subscribers' usernames for a given blog by its ID.
+     *
+     * @param blogId The ID of the blog
+     * @return ResponseEntity<List < String>> A list of usernames of the blog subscribers
+     */
     @GetMapping(FIND_ALL_SUBSCRIBERS)
     public ResponseEntity<List<String>> findAllBlogSubscribersByBlogId(@PathVariable Long blogId) {
         List<SubscriptionEntity> subscriptionsByBlogId = subscriptionService.findSubscriptionByBlogId(blogId);
@@ -41,11 +50,22 @@ public class SubscriptionController {
                 .ok(usernameSubscribers);
     }
 
+    /**
+     * Retrieves all the subscriptions.
+     *
+     * @return List<SubscriptionEntity> A list of SubscriptionEntity objects representing the subscriptions
+     */
     @GetMapping("/")
     public List<SubscriptionEntity> getAll() {
         return subscriptionService.findAllSubscriptions();
     }
 
+    /**
+     * Retrieves all the blog names with the given user ID.
+     *
+     * @param userId The ID of the user
+     * @return ResponseEntity<List < String>> A list of blog names subscribed by the user
+     */
     @GetMapping(FIND_ALL_USERS_SUBSCRIPTION)
     public ResponseEntity<List<String>> findAllBlogsWithUserId(@PathVariable Long userId) {
         List<SubscriptionEntity> subscriptionsByUserId = subscriptionService.findSubscriptionByUserId(userId);
@@ -59,6 +79,12 @@ public class SubscriptionController {
                 .ok(userSubscription);
     }
 
+    /**
+     * Creates a new subscription based on the provided subscription request.
+     *
+     * @param subscriptionRequest The subscription request containing the blog and user IDs
+     * @return ResponseEntity<SubscriptionResponse> The response entity containing the created subscription
+     */
     @PostMapping(CREATE_SUBSCRIPTION)
     public ResponseEntity<SubscriptionResponse> createSubscription(@RequestBody SubscriptionRequest subscriptionRequest) {
         SubscriptionEntity subscriptionEntity = subscriptionService.saveSubscriptionAndSendNotification(subscriptionRequest);
@@ -71,6 +97,13 @@ public class SubscriptionController {
     }
 
 
+    /**
+     * Updates a subscription based on the provided subscription ID and request.
+     *
+     * @param subscriptionId The ID of the subscription to update
+     * @param request The subscription request containing the updated data
+     * @return ResponseEntity<SubscriptionResponse> The response entity containing the updated subscription
+     */
     @PutMapping(UPDATE_SUBSCRIPTION)
     public ResponseEntity<SubscriptionResponse> updateSubscription(@PathVariable Long subscriptionId, @RequestBody SubscriptionRequest request) {
         SubscriptionEntity foundSubscriptionById = subscriptionService.getSubscriptionById(subscriptionId);
@@ -86,6 +119,12 @@ public class SubscriptionController {
     }
 
 
+    /**
+     * Deletes a subscription by its ID.
+     *
+     * @param subscriptionId The ID of the subscription to delete
+     * @return ResponseEntity<SubscriptionResponse> The response entity containing the deleted subscription
+     */
     @DeleteMapping(DELETE_SUBSCRIPTION)
     public ResponseEntity<SubscriptionResponse> deleteSubscriptionById(@PathVariable Long subscriptionId) {
         SubscriptionEntity subscriptionEntity = subscriptionService.getSubscriptionById(subscriptionId);

@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration class for RabbitMQ.
+ */
 @Configuration
 public class RabbitMQConfiguration {
 
@@ -37,16 +40,31 @@ public class RabbitMQConfiguration {
     private String routingOwnerKey;
 
 
+    /**
+     * Creates a subscriber queue for RabbitMQ.
+     *
+     * @return The subscriber queue.
+     */
     @Bean
     public Queue queueSubscriber() {
         return new Queue(queueSubscriberName);
     }
 
+    /**
+     * Creates a TopicExchange for RabbitMQ.
+     *
+     * @return The TopicExchange.
+     */
     @Bean
     public TopicExchange exchangeSubscriber() {
         return new TopicExchange(exchangeSubscriberName);
     }
 
+    /**
+     * Creates a binding for the subscriber queue to the subscriber exchange with the specified routing key.
+     *
+     * @return The Binding object representing the binding relationship between the subscriber queue and the subscriber exchange.
+     */
     @Bean
     public Binding bindingSubscriber() {
         return BindingBuilder
@@ -55,16 +73,35 @@ public class RabbitMQConfiguration {
                 .with(routingSubscriberKey);
     }
 
+    /**
+     * Creates and returns a Queue object for the owner in RabbitMQ.
+     *
+     * @return The Queue object for the owner.
+     *
+     * @see RabbitMQConfiguration#queueOwnerName
+     */
     @Bean
     public Queue queueOwner() {
         return new Queue(queueOwnerName);
     }
 
+    /**
+     * Creates and returns a TopicExchange for the owner in RabbitMQ.
+     *
+     * @return The TopicExchange object for the owner.
+     *
+     * @see RabbitMQConfiguration#exchangeOwnerName
+     */
     @Bean
     public TopicExchange exchangeOwner() {
         return new TopicExchange(exchangeOwnerName);
     }
 
+    /**
+     * Creates a binding for the owner queue to the owner exchange with the specified routing key.
+     *
+     * @return The Binding object representing the binding relationship between the owner queue and the owner exchange.
+     */
     @Bean
     public Binding bindingOwner() {
         return BindingBuilder
@@ -74,11 +111,22 @@ public class RabbitMQConfiguration {
     }
 
 
+    /**
+     * Creates and returns a MessageConverter object for RabbitMQ.
+     *
+     * @return The MessageConverter object for RabbitMQ.
+     */
     @Bean
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
+    /**
+     * Creates a RabbitTemplate for RabbitMQ messaging.
+     *
+     * @param connectionFactory The ConnectionFactory used to create the RabbitTemplate.
+     * @return The RabbitTemplate object.
+     */
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);

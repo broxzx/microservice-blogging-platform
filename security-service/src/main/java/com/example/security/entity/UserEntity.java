@@ -6,6 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The UserEntity class represents the entity for a user in the system.
+ * It is used to store and retrieve user data from the database.
+ */
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor

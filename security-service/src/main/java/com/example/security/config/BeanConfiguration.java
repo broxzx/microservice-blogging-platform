@@ -14,12 +14,22 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * BeanConfiguration class is responsible for configuring and providing various beans used in the application.
+ */
 @Configuration
 @RequiredArgsConstructor
 public class BeanConfiguration {
 
     private final UserDetailsServiceImpl userDetailsService;
 
+    /**
+     * Configures the security filter chain for the application.
+     *
+     * @param http the {@link HttpSecurity} to use for configuring the filter chain
+     * @return the {@link SecurityFilterChain} configured with the specified rules
+     * @throws Exception if an error occurs while configuring the filter chain
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -33,17 +43,34 @@ public class BeanConfiguration {
                 .build();
     }
 
+    /**
+     * Returns a new instance of BCryptPasswordEncoder for password encoding.
+     *
+     * @return a BCryptPasswordEncoder instance
+     */
     @Bean
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Retrieves the authentication manager from the given AuthenticationConfiguration.
+     *
+     * @param authenticationConfiguration the AuthenticationConfiguration object
+     * @return the AuthenticationManager retrieved from the authenticationConfiguration
+     * @throws Throwable if an exception is thrown while retrieving the authentication manager
+     */
     @Bean
     @SneakyThrows
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /**
+     * Creates and configures an instance of {@link DaoAuthenticationProvider} for authentication purposes.
+     *
+     * @return the configured {@link DaoAuthenticationProvider} instance
+     */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();

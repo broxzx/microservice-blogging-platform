@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A controller class responsible for handling security-related requests such as login and registration.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("security")
@@ -31,8 +34,16 @@ public class Controller {
     private final UserDetailsServiceImpl userDetailsService;
 
     private static final String LOGIN = "/login";
+
     private static final String REGISTRATION = "/registration";
 
+    /**
+     * Authenticates the user and generates a JWT token.
+     *
+     * @param user The credentials of the user trying to login
+     * @return The generated JWT token
+     * @throws RuntimeException If the password is incorrect
+     */
     @PostMapping(LOGIN)
     public String login(@RequestBody JwtUserRequest user) {
         try {
@@ -47,6 +58,12 @@ public class Controller {
         return token;
     }
 
+    /**
+     * Registers a new user.
+     *
+     * @param jwtUserRequest The user information for registration
+     * @return The response entity containing the registered user's information
+     */
     @PostMapping(REGISTRATION)
     public ResponseEntity<JwtUserResponse> registration(@RequestBody JwtUserRequest jwtUserRequest) {
         service.saveUser(UserEntity.builder()

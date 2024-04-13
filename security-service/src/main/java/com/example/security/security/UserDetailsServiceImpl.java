@@ -11,6 +11,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * The UserDetailsServiceImpl class is an implementation of the UserDetailsService interface.
+ * It retrieves user details from the UserRepository and constructs a UserDetails object.
+ */
 @RequiredArgsConstructor
 @Service
 @Log4j2
@@ -18,6 +22,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    /**
+     * Retrieves the user details for the given username.
+     *
+     * @param username the username of the user
+     * @return the UserDetails object for the user
+     * @throws UsernameNotFoundException if the user with the given username is not found
+     */
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

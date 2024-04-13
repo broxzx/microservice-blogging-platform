@@ -11,6 +11,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * The UserService class is responsible for managing user-related operations such as user creation and retrieval.
+ * It interacts with the UserRepository to store and fetch user data in the database.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -23,12 +27,24 @@ public class UserService {
 
     private final UserDtoMapper userDtoMapper;
 
+    /**
+     * Saves a user entity to the database.
+     *
+     * @param user the user entity to be saved
+     */
     @Transactional
     public void saveUser(UserEntity user) {
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
+    /**
+     * Retrieves a UserDtoResponse by the specified user ID.
+     *
+     * @param id The ID of the user.
+     * @return The UserDtoResponse object corresponding to the specified user ID.
+     * @throws UserNotFoundException If a user with the specified ID does not exist.
+     */
     @Transactional
     public UserDtoResponse getUserResponseById(Long id) {
         UserEntity userEntity = userRepository.findById(id)
@@ -39,6 +55,13 @@ public class UserService {
         return userDtoMapper.makeUserDtoResponse(userEntity);
     }
 
+    /**
+     * Retrieves a UserDtoResponse by the specified username.
+     *
+     * @param username The username of the user.
+     * @return The UserDtoResponse object corresponding to the specified username.
+     * @throws UserNotFoundException If a user with the specified username does not exist.
+     */
     @Transactional
     public UserDtoResponse getUserResponseByUsername(String username) {
         UserEntity userEntity = userRepository.findByUsername(username)
@@ -49,6 +72,13 @@ public class UserService {
         return userDtoMapper.makeUserDtoResponse(userEntity);
     }
 
+    /**
+     * Retrieves a UserDtoResponse by the provided JWT token.
+     *
+     * @param token The JWT token provided as a string.
+     * @return The UserDtoResponse object retrieved based on the token.
+     * @throws UserNotFoundException If a user with the corresponding username is not found.
+     */
     @Transactional
     public UserDtoResponse getUserDtoResponseByJwtToken(String token) {
         String username = jwtTokenProvider.getUsername(token);

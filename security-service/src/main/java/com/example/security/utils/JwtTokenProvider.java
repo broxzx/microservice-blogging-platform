@@ -13,6 +13,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * The JwtTokenProvider class is responsible for generating and validating JWT tokens.
+ * It uses a secret key and a duration to generate the tokens.
+ */
 @Component
 public class JwtTokenProvider {
 
@@ -22,6 +26,12 @@ public class JwtTokenProvider {
     @Value("${jwt.duration}")
     private Duration duration;
 
+    /**
+     * Generates a JWT token for the given user details.
+     *
+     * @param userDetails The UserDetail object containing user information
+     * @return The generated JWT token
+     */
     public String getToken(UserDetails userDetails) {
         HashMap<String, List<String>> claims = new HashMap<>();
 
@@ -45,6 +55,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    /**
+     * Retrieves the claims from the JWT token.
+     *
+     * @param token The JWT token
+     * @return The claims from the JWT token
+     */
     public Claims getAllClaims(String token) {
         return Jwts
                 .parser()
@@ -54,16 +70,33 @@ public class JwtTokenProvider {
                 .getPayload();
     }
 
+    /**
+     * Retrieves the username from the JWT token.
+     *
+     * @param token The JWT token
+     * @return The username retrieved from the JWT token
+     */
     public String getUsername(String token) {
         return getAllClaims(token)
                 .getSubject();
     }
 
+    /**
+     * Retrieves the roles from the JWT token.
+     *
+     * @param token The JWT token
+     * @return A list of roles retrieved from the JWT token
+     */
     public List<String> getRoles(String token) {
         return getAllClaims(token)
                 .get("roles", List.class);
     }
 
+    /**
+     * Validates a JWT token.
+     *
+     * @param token The JWT token to be validated
+     */
     public void validate(String token) {
         Jwts
                 .parser()

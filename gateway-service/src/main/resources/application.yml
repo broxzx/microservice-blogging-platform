@@ -2,9 +2,31 @@
 server:
   port: 8080
 
+jwt:
+  enabled: false
+
 #spring
 spring:
   application:
     name: gateway-service
   config:
     import: "optional:configserver:http://localhost:8888"
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8180/realms/microblogging-platform-microservice/protocol/openid-connect/certs
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8180/realms/microblogging-platform-microservice
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: microblogging-platform-microservice
+            client-secret: Uv1Y8Fk86XyEy5j5byQayIrP92e9MJfm
+            scope:
+              - openid
+              - view
+              - edit
+              - microprofile-jwt

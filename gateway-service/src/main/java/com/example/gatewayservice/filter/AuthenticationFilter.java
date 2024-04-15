@@ -5,6 +5,7 @@ import com.example.gatewayservice.exception.TokenIsAbsentException;
 import com.example.gatewayservice.exception.TokenIsNotValidException;
 import com.example.gatewayservice.jwtUtils.JwtUtils;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +23,7 @@ import java.util.Objects;
  */
 @Component
 @Log4j2
+@ConditionalOnProperty(prefix = "jwt", name = "enabled", matchIfMissing = true)
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
 
     private final RouteValidator routeValidator;

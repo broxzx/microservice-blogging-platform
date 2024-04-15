@@ -1,5 +1,6 @@
 package com.example.gatewayservice.filter;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import java.util.function.Predicate;
  * corresponds to an admin request.
  */
 @Component
+@ConditionalOnProperty(prefix = "jwt", name = "enabled", matchIfMissing = true)
 public class RouteValidator {
 
     /**

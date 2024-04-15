@@ -3,6 +3,7 @@ package com.example.gatewayservice.jwtUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * The JwtUtils class provides methods for validating JSON Web Tokens (JWTs) and extracting information from them.
  */
 @Component
+@ConditionalOnProperty(prefix = "jwt", name = "enabled", matchIfMissing = true)
 public class JwtUtils {
 
     @Value("${jwt.token}")

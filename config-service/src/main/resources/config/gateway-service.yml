@@ -19,15 +19,11 @@ spring:
           uri: lb://blog-service
           predicates:
             - Path=/blog/**, /swagger-ui/index.html
-          filters:
-            - AuthenticationFilter
 
         - id: subscription-service
           uri: lb://subscription-service
           predicates:
             - Path=/subscription/**
-          filters:
-            - AuthenticationFilter
 
         - id: notification-service
           uri: lb://notification-service

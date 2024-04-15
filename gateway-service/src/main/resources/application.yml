@@ -24,7 +24,7 @@ spring:
         registration:
           keycloak:
             client-id: microblogging-platform-microservice
-            client-secret: Uv1Y8Fk86XyEy5j5byQayIrP92e9MJfm
+            client-secret: ChnrHmK9xg8G7yTlK0t3gy2NlcmPE425
             scope:
               - openid
               - view

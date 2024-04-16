@@ -57,8 +57,8 @@ public class UserService {
         Span userEntityLookUp = tracer.nextSpan().name("User Entity Look up");
 
         try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
-//            String username = jwtTokenUtils.getUsernameByToken(token);
-            UserModelResponse userModelResponse = webClient
+
+            return webClient
                     .get()
                     .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
                             .queryParam("token", token)
@@ -67,8 +67,6 @@ public class UserService {
                     .retrieve()
                     .bodyToMono(UserModelResponse.class)
                     .block();
-
-            return userModelResponse;
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {

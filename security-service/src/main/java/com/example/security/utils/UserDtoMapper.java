@@ -13,15 +13,14 @@ public class UserDtoMapper {
     /**
      * Creates a UserDtoResponse object based on the provided UserEntity object.
      *
-     * @param user The UserEntity object from which to create the UserDtoResponse object.
-     * @return The created UserDtoResponse object.
+     * @param user The UserEntity object to be converted.
+     * @return The UserDtoResponse object representing the user.
      */
     public UserDtoResponse makeUserDtoResponse(UserEntity user) {
         return UserDtoResponse.builder()
-                .userId(user.getId())
+                .userId(String.valueOf(user.getId()))
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .role(user.getRole())
                 .build();
     }
 }

@@ -4,10 +4,9 @@ import com.example.security.dto.UserDtoResponse;
 import com.example.security.entity.UserEntity;
 import com.example.security.exception.UserNotFoundException;
 import com.example.security.repository.UserRepository;
-import com.example.security.utils.JwtTokenProvider;
 import com.example.security.utils.UserDtoMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +20,9 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final BCryptPasswordEncoder encoder;
+//    private final BCryptPasswordEncoder encoder;
 
-    private final JwtTokenProvider jwtTokenProvider;
+//    private final JwtTokenProvider jwtTokenProvider;
 
     private final UserDtoMapper userDtoMapper;
 
@@ -34,7 +33,7 @@ public class UserService {
      */
     @Transactional
     public void saveUser(UserEntity user) {
-        user.setPassword(encoder.encode(user.getPassword()));
+//        user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
@@ -45,8 +44,8 @@ public class UserService {
      * @return The UserDtoResponse object corresponding to the specified user ID.
      * @throws UserNotFoundException If a user with the specified ID does not exist.
      */
-    @Transactional
-    public UserDtoResponse getUserResponseById(Long id) {
+    @Transactional(readOnly = true)
+    public UserDtoResponse getUserResponseById(String id) {
         UserEntity userEntity = userRepository.findById(id)
                 .orElseThrow(
                         () -> new UserNotFoundException("user with id '%d' was not found".formatted(id))
@@ -62,7 +61,7 @@ public class UserService {
      * @return The UserDtoResponse object corresponding to the specified username.
      * @throws UserNotFoundException If a user with the specified username does not exist.
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public UserDtoResponse getUserResponseByUsername(String username) {
         UserEntity userEntity = userRepository.findByUsername(username)
                 .orElseThrow(
@@ -80,15 +79,30 @@ public class UserService {
      * @throws UserNotFoundException If a user with the corresponding username is not found.
      */
     @Transactional
+    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
     public UserDtoResponse getUserDtoResponseByJwtToken(String token) {
-        String username = jwtTokenProvider.getUsername(token);
+//        String username = jwtTokenProvider.getUsername(token);
 
-        UserEntity userEntity = userRepository.findByUsername(username)
-                .orElseThrow(
-                        () -> new UserNotFoundException("user with username '%s' was not found".formatted(username))
-                );
+//        UserEntity userEntity = userRepository.findByUsername(username)
+//                .orElseThrow(
+//                        () -> new UserNotFoundException("user with username '%s' was not found".formatted(username))
+//                );
+
+        return userDtoMapper.makeUserDtoResponse(null);
+    }
+
+    /**
+     * Finds a user entity in the database by email.
+     *
+     * @param email The email of the user.
+     * @return The UserEntity object corresponding to the specified email.
+     * @throws UserNotFoundException If a user with the specified email is not found.
+     */
+    @Transactional(readOnly = true)
+    public UserDtoResponse findUserByEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("user with email '%s' was not found".formatted(email)));
 
         return userDtoMapper.makeUserDtoResponse(userEntity);
     }
-
 }

@@ -8,7 +8,6 @@ import com.messageservice.messageservice.exception.TokenIsInvalidException;
 import com.messageservice.messageservice.model.BlogModelResponse;
 import com.messageservice.messageservice.model.UserModelResponse;
 import com.messageservice.messageservice.service.MessageService;
-import com.messageservice.messageservice.utils.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -56,7 +55,6 @@ public class MessageFilterAspect {
         BlogModelResponse blogModelResponse = getBlogModelResponseById(messageEntity.getBlogId());
 
         if (!Objects.equals(messageEntity.getAuthorId(), String.valueOf(userModelResponse.userId())) &&
-                userModelResponse.role() != Role.ROLE_ADMIN &&
                 !Objects.equals(blogModelResponse.ownerId(), String.valueOf(userModelResponse.userId()))) {
             throw new AccessDeniedException("you do not have access to this operation");
         }
@@ -69,11 +67,11 @@ public class MessageFilterAspect {
     /**
      * Checks if the user has access to update a message entity.
      *
-     * @param joinPoint           The join point of the method.
-     * @param messageId           The ID of the message entity to update.
-     * @param messageRequestDto   The updated message request DTO.
+     * @param joinPoint         The join point of the method.
+     * @param messageId         The ID of the message entity to update.
+     * @param messageRequestDto The updated message request DTO.
      * @return The response entity containing the updated message response DTO.
-     * @throws Throwable         Throws an AccessDeniedException if the user does not have access to update the message.
+     * @throws Throwable Throws an AccessDeniedException if the user does not have access to update the message.
      */
     @Around(value = """
             execution(* com.messageservice.messageservice.controller.MessageController

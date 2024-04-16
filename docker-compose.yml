@@ -77,9 +77,10 @@ services:
   postgres-keycloak:
     image: postgres:15
     container_name: postgres-keycloak
+    restart: unless-stopped
     environment:
-      POSTGRES_PASSWORD: admin
       POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
       POSTGRES_DB: pdb
     ports:
       - "9123:5432"
@@ -90,6 +91,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.2
     container_name: keycloak-blogging
+    restart: unless-stopped
     command: [ "start-dev", "--import-realm" ]
     ports:
       - "8180:8080"

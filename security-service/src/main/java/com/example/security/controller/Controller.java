@@ -7,6 +7,7 @@ import com.example.security.security.UserDetailsServiceImpl;
 import com.example.security.service.UserService;
 import com.example.security.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("security")
+@ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
 public class Controller {
 
     private final UserService service;
@@ -68,7 +70,7 @@ public class Controller {
     public ResponseEntity<JwtUserResponse> registration(@RequestBody JwtUserRequest jwtUserRequest) {
         service.saveUser(UserEntity.builder()
                 .username(jwtUserRequest.getUsername())
-                .password(jwtUserRequest.getPassword())
+//                .password(jwtUserRequest.getPassword())
                 .email(jwtUserRequest.getEmail())
                 .build());
 

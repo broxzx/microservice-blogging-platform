@@ -15,29 +15,48 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-@Table(name = "t_users", schema = "users")
+@Table(name = "user_entity", schema = "public")
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "c_id")
-    private Long id;
+    @Column(name = "id")
+    private String id;
 
-    @Column(name = "c_username", unique = true)
-    private String username;
-
-    @Column(name = "c_password")
-    private String password;
-
-    @Column(name = "c_email", unique = true)
+    @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "c_role")
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @Column(name = "email_constraint", unique = true)
+    private String emailConstraint;
 
-    @PrePersist
-    public void init() {
-        role = Role.ROLE_USER;
-    }
+    @Column(name = "email_verified", unique = true)
+    private Boolean emailVerified;
+
+    @Column(name = "enabled")
+    private Boolean enabled;
+
+    @Column(name = "federation_link")
+    public String federationLink;
+
+    @Column(name = "first_name")
+    public String firstName;
+
+    @Column(name = "last_name")
+    public String lastName;
+
+    @Column(name = "realm_id")
+    public String realmId;
+
+    @Column(name = "username")
+    public String username;
+
+    @Column(name = "created_timestamp")
+    public Long createdTimestamp;
+
+    @Column(name = "service_account_client_link")
+    public String serviceAccountClientLink;
+
+    @Column(name = "not_before")
+    public Integer notBefore;
+
 }

@@ -178,7 +178,7 @@ public class SubscriptionService {
         log.info(userModelResponse);
 
         subscriptionEntity.setBlogId(foundBlogEntity.id());
-        subscriptionEntity.setUserId(Objects.requireNonNull(userModelResponse).userId());
+        subscriptionEntity.setUserId(Long.valueOf(Objects.requireNonNull(userModelResponse).userId()));
         subscriptionEntity.setBlogName(foundBlogEntity.title());
         subscriptionEntity.setUsername(userModelResponse.username());
 

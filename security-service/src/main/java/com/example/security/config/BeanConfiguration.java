@@ -1,8 +1,8 @@
 package com.example.security.config;
 
-import com.example.security.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +21,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class BeanConfiguration {
 
-    private final UserDetailsServiceImpl userDetailsService;
+//    private final UserDetailsServiceImpl userDetailsService;
 
     /**
      * Configures the security filter chain for the application.
@@ -49,6 +49,7 @@ public class BeanConfiguration {
      * @return a BCryptPasswordEncoder instance
      */
     @Bean
+    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
@@ -62,6 +63,7 @@ public class BeanConfiguration {
      */
     @Bean
     @SneakyThrows
+    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
         return authenticationConfiguration.getAuthenticationManager();
     }
@@ -72,11 +74,12 @@ public class BeanConfiguration {
      * @return the configured {@link DaoAuthenticationProvider} instance
      */
     @Bean
+    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
 
         daoAuthenticationProvider.setPasswordEncoder(encoder());
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+//        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
 
         return daoAuthenticationProvider;
     }

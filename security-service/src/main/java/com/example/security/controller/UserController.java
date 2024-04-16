@@ -3,6 +3,7 @@ package com.example.security.controller;
 import com.example.security.dto.UserDtoResponse;
 import com.example.security.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ public class UserController {
     private static final String GET_USER_BY_ID = "/{id}";
     private static final String GET_USER_BY_USERNAME = "/by-username";
     private static final String GET_USER_BY_JWT_TOKEN = "/by-jwt-token";
+    private static final String GET_USER_BY_EMAIL = "/by-email";
 
 
     /**
@@ -28,7 +30,7 @@ public class UserController {
      * @return A ResponseEntity containing the UserDtoResponse as the response body.
      */
     @GetMapping(GET_USER_BY_ID)
-    public ResponseEntity<UserDtoResponse> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserDtoResponse> getUserById(@PathVariable String id) {
         return ResponseEntity.ok(userService.getUserResponseById(id));
     }
 
@@ -43,6 +45,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserResponseByUsername(username));
     }
 
+    @GetMapping(GET_USER_BY_EMAIL)
+    public ResponseEntity<UserDtoResponse> getUserByEmail(@RequestParam("email") String email) {
+        return ResponseEntity.ok(userService.findUserByEmail(email));
+    }
+
     /**
      * Retrieves a UserDtoResponse by the given JWT token.
      *
@@ -50,6 +57,7 @@ public class UserController {
      * @return a ResponseEntity containing the UserDtoResponse retrieved from userService
      */
     @GetMapping(GET_USER_BY_JWT_TOKEN)
+    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
     public ResponseEntity<UserDtoResponse> getUserDtoResponseByJwtToken(@RequestParam("token") String token) {
         return ResponseEntity.ok(userService.getUserDtoResponseByJwtToken(token));
     }

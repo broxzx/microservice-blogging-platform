@@ -2,13 +2,13 @@ package com.example.blogservice.aop;
 
 import com.example.blogservice.dto.BlogResponseDto;
 import com.example.blogservice.entity.BlogEntity;
-import com.example.blogservice.entity.Role;
 import com.example.blogservice.exception.AccessDeniedException;
 import com.example.blogservice.model.UserModelResponse;
 import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Aspect
 @Component
 @RequiredArgsConstructor
+@Log4j2
 public class BlogFilterAspect {
 
     private final BlogService blogService;
@@ -53,17 +54,12 @@ public class BlogFilterAspect {
         ResponseEntity<List<BlogResponseDto>> result = (ResponseEntity<List<BlogResponseDto>>) joinPoint.proceed();
 
         if (result.getBody() != null) {
-            Role currentUserRole = userModelResponse.role();
-            if (currentUserRole == Role.ROLE_ADMIN || currentUserRole == Role.ROLE_MANAGER) {
-                return result;
-            } else {
-                List<BlogResponseDto> response = result.getBody()
-                        .stream()
-                        .filter(blog -> filteredBlogEntities.stream().anyMatch(userBlog -> Objects.equals(userBlog.getId(), blog.getId())))
-                        .collect(Collectors.toList());
+            List<BlogResponseDto> response = result.getBody()
+                    .stream()
+                    .filter(blog -> filteredBlogEntities.stream().anyMatch(userBlog -> Objects.equals(userBlog.getId(), blog.getId())))
+                    .collect(Collectors.toList());
 
-                return ResponseEntity.ok(response);
-            }
+            return ResponseEntity.ok(response);
         } else {
             return result;
         }
@@ -85,12 +81,6 @@ public class BlogFilterAspect {
         ResponseEntity<BlogResponseDto> response = (ResponseEntity<BlogResponseDto>) proceedingJoinPoint.proceed();
 
         if (response.getBody() != null) {
-            Role currentUserRole = userModelResponse.role();
-
-            if (currentUserRole == Role.ROLE_ADMIN || currentUserRole == Role.ROLE_MANAGER) {
-                return response;
-            }
-
             BlogResponseDto responseBody = response.getBody();
 
             if (!Objects.equals(responseBody.getOwnerId(), String.valueOf(userModelResponse.userId()))) {
@@ -123,9 +113,7 @@ public class BlogFilterAspect {
 
         BlogEntity foundBlogEntity = blogService.findById(id);
 
-        if (!Objects.equals(foundBlogEntity.getOwnerId(), String.valueOf(userModelResponse.userId()))
-                && (userModelResponse.role() != Role.ROLE_ADMIN
-                && userModelResponse.role() != Role.ROLE_MANAGER)) {
+        if (!Objects.equals(foundBlogEntity.getOwnerId(), String.valueOf(userModelResponse.userId()))) {
             throw new AccessDeniedException("you don't have access to the blog with id %d".formatted(id));
         }
 
@@ -139,6 +127,8 @@ public class BlogFilterAspect {
      */
     private UserModelResponse getUserByToken() {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+
+        log.info(request);
 
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
 

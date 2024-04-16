@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import java.util.List;
  * It uses a secret key and a duration to generate the tokens.
  */
 @Component
+@ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
 public class JwtTokenProvider {
 
     @Value("${jwt.token}")

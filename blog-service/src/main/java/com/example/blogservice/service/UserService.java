@@ -6,6 +6,7 @@ import com.example.blogservice.utils.JwtTokenUtils;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -46,26 +47,30 @@ public class UserService {
     }
 
     /**
-     * Retrieves user information based on the JWT token.
+     * Finds the user entity for the given JWT token.
      *
      * @param token The JWT token.
-     * @return The UserModelResponse object containing user information.
+     * @return The user entity wrapped in a UserModelResponse object.
+     * @throws RuntimeException If an error occurs while retrieving the user entity.
      */
     public UserModelResponse findUserEntityByJwtToken(String token) {
         Span userEntityLookUp = tracer.nextSpan().name("User Entity Look up");
 
-        try (Tracer.SpanInScope spanInScope = tracer.withSpan(userEntityLookUp.start())) {
-            String username = jwtTokenUtils.getUsername(token);
+        try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
+            String username = jwtTokenUtils.getUsernameByToken(token);
             UserModelResponse userModelResponse = webClient
                     .get()
                     .uri("http://localhost:8080/user/by-username", uriBuilder -> uriBuilder
                             .queryParam("username", username)
                             .build())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                     .retrieve()
                     .bodyToMono(UserModelResponse.class)
                     .block();
 
             return userModelResponse;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             userEntityLookUp.end();
         }

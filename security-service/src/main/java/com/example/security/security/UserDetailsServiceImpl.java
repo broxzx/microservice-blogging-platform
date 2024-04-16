@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 @Log4j2
-@ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
+@ConditionalOnProperty(prefix = "security", name = "jwt.enabled")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;

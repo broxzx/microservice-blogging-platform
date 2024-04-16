@@ -8,7 +8,6 @@ import com.example.security.utils.JwtTokenProvider;
 import com.example.security.utils.UserDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-
-    private final BCryptPasswordEncoder encoder;
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -50,7 +47,7 @@ public class UserService {
     public UserDtoResponse getUserResponseById(String id) {
         UserEntity userEntity = userRepository.findById(id)
                 .orElseThrow(
-                        () -> new UserNotFoundException("user with id '%d' was not found".formatted(id))
+                        () -> new UserNotFoundException("user with id '%s' was not found".formatted(id))
                 );
 
         return userDtoMapper.makeUserDtoResponse(userEntity);
@@ -81,9 +78,9 @@ public class UserService {
      * @throws UserNotFoundException If a user with the corresponding username is not found.
      */
     @Transactional
-    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled")
     public UserDtoResponse getUserDtoResponseByJwtToken(String token) {
-        String username = null;
+        String username;
 
         try {
             username = jwtTokenProvider.getUsernameByToken(token);

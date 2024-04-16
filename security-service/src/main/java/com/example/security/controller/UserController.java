@@ -57,7 +57,7 @@ public class UserController {
      * @return a ResponseEntity containing the UserDtoResponse retrieved from userService
      */
     @GetMapping(GET_USER_BY_JWT_TOKEN)
-    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled")
     public ResponseEntity<UserDtoResponse> getUserDtoResponseByJwtToken(@RequestParam("token") String token) {
         return ResponseEntity.ok(userService.getUserDtoResponseByJwtToken(token));
     }

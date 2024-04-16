@@ -71,15 +71,6 @@ public class SubscriptionService {
     }
 
     /**
-     * Save the given subscription entity.
-     *
-     * @param subscriptionEntity the subscription entity to be saved
-     */
-    public void saveSubscription(SubscriptionEntity subscriptionEntity) {
-        subscriptionRepository.save(subscriptionEntity);
-    }
-
-    /**
      * Saves a subscription entity and sends a notification to the subscriber.
      *
      * @param subscriptionRequest the subscription request object containing the blog ID and user ID
@@ -88,20 +79,7 @@ public class SubscriptionService {
     public SubscriptionEntity saveSubscriptionAndSendNotification(SubscriptionRequest subscriptionRequest) {
         BlogModelResponse blogModelResponse = blogService.getBlogEntityById(subscriptionRequest.getBlogId());
 
-        UserModelResponse userModelResponse;
-        Span userEntityLookUp = tracer.nextSpan().name("User Entity LookUp");
-        try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
-            userModelResponse = webClient
-                    .get()
-                    .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
-                            .queryParam("token", getSubstringUserToken()).build())
-                    .header(HttpHeaders.AUTHORIZATION, getUserToken())
-                    .retrieve()
-                    .bodyToMono(UserModelResponse.class)
-                    .block();
-        } finally {
-            userEntityLookUp.end();
-        }
+        UserModelResponse userModelResponse = userModelResponseLookUp();
 
         log.info(userModelResponse);
 
@@ -122,7 +100,7 @@ public class SubscriptionService {
                 .build();
 
         rabbitMQNotificationProducer.sendNotificationToSubscriber(notificationModel);
-        sendNotificationToBlogOwner(blogModelResponse.ownerId(), blogModelResponse.title());
+        sendNotificationToBlogOwner(blogModelResponse.title());
 
         return subscriptionEntity;
     }
@@ -130,25 +108,10 @@ public class SubscriptionService {
     /**
      * Sends a notification to the blog owner.
      *
-     * @param userId    the ID of the user to send the notification to
      * @param blogTitle the title of the blog
      */
-    private void sendNotificationToBlogOwner(String userId, String blogTitle) {
-        Span userEntityLookUp = tracer.nextSpan().name("User Entity LookUp");
-
-        UserModelResponse response;
-        try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
-            response = webClient
-                    .get()
-                    .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
-                            .queryParam("token", getSubstringUserToken()).build())
-                    .header(HttpHeaders.AUTHORIZATION, getUserToken())
-                    .retrieve()
-                    .bodyToMono(UserModelResponse.class)
-                    .block();
-        } finally {
-            userEntityLookUp.end();
-        }
+    private void sendNotificationToBlogOwner(String blogTitle) {
+        UserModelResponse response = userModelResponseLookUp();
 
         NotificationModel notificationModel = NotificationModel.builder()
                 .username(Objects.requireNonNull(response).username())
@@ -169,21 +132,8 @@ public class SubscriptionService {
      */
     public SubscriptionEntity updateSubscription(SubscriptionEntity subscriptionEntity, SubscriptionRequest subscriptionRequest) {
         BlogModelResponse foundBlogEntity = blogService.getBlogEntityById(subscriptionRequest.getBlogId());
-        UserModelResponse userModelResponse;
+        UserModelResponse userModelResponse = userModelResponseLookUp();
 
-        Span userEntityLookUp = tracer.nextSpan().name("User Entity LookUp");
-
-
-        try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
-            userModelResponse = webClient
-                    .get()
-                    .uri("http://localhost:8080/user/%d".formatted(subscriptionRequest.getUserId()))
-                    .retrieve()
-                    .bodyToMono(UserModelResponse.class)
-                    .block();
-        } finally {
-            userEntityLookUp.end();
-        }
         log.info(userModelResponse);
 
         subscriptionEntity.setBlogId(foundBlogEntity.id());
@@ -224,7 +174,13 @@ public class SubscriptionService {
     }
 
 
-    public String getUserToken() {
+    /**
+     * Returns the user token from the `Authorization` header in the HTTP request.
+     *
+     * @return The user token extracted from the `Authorization` header.
+     * @throws TokenIsInvalidException If the `Authorization` header is missing or does not start with "Bearer ".
+     */
+    private String getUserToken() {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
         String token = request.getHeader("Authorization");
@@ -236,7 +192,13 @@ public class SubscriptionService {
         }
     }
 
-    public String getSubstringUserToken() {
+    /**
+     * Retrieves the substring user token from the "Authorization" header of the current HTTP servlet request.
+     *
+     * @return the substring user token
+     * @throws TokenIsInvalidException if the "Authorization" header is invalid or missing
+     */
+    private String getSubstringUserToken() {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
         String token = request.getHeader("Authorization");
@@ -248,4 +210,31 @@ public class SubscriptionService {
             throw new TokenIsInvalidException("Authorization header is invalid");
         }
     }
+
+    /**
+     * Performs a lookup for a user model response by making a GET request to the specified URI and retrieving the response body as a UserModelResponse object.
+     *
+     * @return The UserModelResponse object obtained from the lookup.
+     */
+    private UserModelResponse userModelResponseLookUp() {
+        UserModelResponse userModelResponse;
+
+        Span userEntityLookUp = tracer.nextSpan().name("User Entity LookUp");
+
+        try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
+            userModelResponse = webClient
+                    .get()
+                    .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
+                            .queryParam("token", getSubstringUserToken()).build())
+                    .header(HttpHeaders.AUTHORIZATION, getUserToken())
+                    .retrieve()
+                    .bodyToMono(UserModelResponse.class)
+                    .block();
+        } finally {
+            userEntityLookUp.end();
+        }
+
+        return userModelResponse;
+    }
+
 }

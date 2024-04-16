@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("security")
-@ConditionalOnProperty(prefix = "security", name = "jwt.auth.enabled", matchIfMissing = false)
+@ConditionalOnProperty(prefix = "security", name = "jwt.auth.enabled")
 public class Controller {
 
     private final UserService service;
@@ -42,7 +42,7 @@ public class Controller {
     /**
      * Authenticates the user and generates a JWT token.
      *
-     * @param user The credentials of the user trying to login
+     * @param user The credentials of the user trying to log in
      * @return The generated JWT token
      * @throws RuntimeException If the password is incorrect
      */
@@ -55,9 +55,8 @@ public class Controller {
         }
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-        String token = jwtTokenProvider.getToken(userDetails);
 
-        return token;
+        return jwtTokenProvider.getToken(userDetails);
     }
 
     /**

@@ -27,10 +27,9 @@ public class BeanConfiguration {
      *
      * @param http The {@link ServerHttpSecurity} instance to configure the security settings.
      * @return The configured {@link SecurityWebFilterChain}.
-     * @throws Exception If an exception occurs during the configuration process.
      */
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(authorizeExchange -> authorizeExchange

@@ -50,7 +50,7 @@ public class BeanConfiguration {
      * @return a BCryptPasswordEncoder instance
      */
     @Bean
-    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled")
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
@@ -60,11 +60,11 @@ public class BeanConfiguration {
      *
      * @param authenticationConfiguration the AuthenticationConfiguration object
      * @return the AuthenticationManager retrieved from the authenticationConfiguration
-     * @throws Throwable if an exception is thrown while retrieving the authentication manager
      */
+
     @Bean
     @SneakyThrows
-    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled")
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
         return authenticationConfiguration.getAuthenticationManager();
     }
@@ -75,7 +75,7 @@ public class BeanConfiguration {
      * @return the configured {@link DaoAuthenticationProvider} instance
      */
     @Bean
-    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "security", name = "jwt.enabled")
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
 

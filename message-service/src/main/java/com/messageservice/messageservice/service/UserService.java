@@ -41,7 +41,7 @@ public class UserService {
                 throw new TokenIsInvalidException("token is either absent or invalid. please login by using 'http://localhost:8080/security/login'");
             }
 
-            UserModelResponse userModelResponse = webClient
+            return webClient
                     .get()
                     .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
                             .queryParam("token", userToken)
@@ -56,8 +56,6 @@ public class UserService {
                         }
                     })
                     .block();
-
-            return userModelResponse;
         } finally {
             userEntityLookUp.end();
         }

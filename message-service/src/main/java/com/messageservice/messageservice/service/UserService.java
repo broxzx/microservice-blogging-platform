@@ -5,6 +5,7 @@ import com.messageservice.messageservice.model.UserModelResponse;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.scheduler.Schedulers;
@@ -45,6 +46,7 @@ public class UserService {
                     .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
                             .queryParam("token", userToken)
                             .build())
+                    .header(HttpHeaders.AUTHORIZATION, token)
                     .retrieve()
                     .bodyToMono(UserModelResponse.class)
                     .subscribeOn(Schedulers.boundedElastic())

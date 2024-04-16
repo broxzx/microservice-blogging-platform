@@ -32,7 +32,7 @@ public class UserService {
      * @return The user ID as a string.
      */
     public String findUserIdByJwtToken(String token) {
-        return String.valueOf(Objects.requireNonNull(findUserEntityByJwtToken(token).userId()));
+        return Objects.requireNonNull(findUserEntityByJwtToken(token).userId());
     }
 
     /**
@@ -57,11 +57,11 @@ public class UserService {
         Span userEntityLookUp = tracer.nextSpan().name("User Entity Look up");
 
         try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
-            String username = jwtTokenUtils.getUsernameByToken(token);
+//            String username = jwtTokenUtils.getUsernameByToken(token);
             UserModelResponse userModelResponse = webClient
                     .get()
-                    .uri("http://localhost:8080/user/by-username", uriBuilder -> uriBuilder
-                            .queryParam("username", username)
+                    .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
+                            .queryParam("token", token)
                             .build())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                     .retrieve()

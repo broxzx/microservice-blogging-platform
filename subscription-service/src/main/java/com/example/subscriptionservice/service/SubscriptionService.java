@@ -3,6 +3,7 @@ package com.example.subscriptionservice.service;
 import com.example.subscriptionservice.dto.SubscriptionRequest;
 import com.example.subscriptionservice.entity.SubscriptionEntity;
 import com.example.subscriptionservice.exception.NotFoundException;
+import com.example.subscriptionservice.exception.TokenIsInvalidException;
 import com.example.subscriptionservice.model.BlogModelResponse;
 import com.example.subscriptionservice.model.NotificationModel;
 import com.example.subscriptionservice.model.UserModelResponse;
@@ -10,9 +11,13 @@ import com.example.subscriptionservice.producer.RabbitMQNotificationProducer;
 import com.example.subscriptionservice.repository.SubscriptionRepository;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 
@@ -88,7 +93,9 @@ public class SubscriptionService {
         try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
             userModelResponse = webClient
                     .get()
-                    .uri("http://localhost:8080/user/%d".formatted(subscriptionRequest.getUserId()))
+                    .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
+                            .queryParam("token", getSubstringUserToken()).build())
+                    .header(HttpHeaders.AUTHORIZATION, getUserToken())
                     .retrieve()
                     .bodyToMono(UserModelResponse.class)
                     .block();
@@ -133,7 +140,9 @@ public class SubscriptionService {
         try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
             response = webClient
                     .get()
-                    .uri("http://localhost:8080/user/%s".formatted(userId))
+                    .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
+                            .queryParam("token", getSubstringUserToken()).build())
+                    .header(HttpHeaders.AUTHORIZATION, getUserToken())
                     .retrieve()
                     .bodyToMono(UserModelResponse.class)
                     .block();
@@ -212,5 +221,31 @@ public class SubscriptionService {
      */
     public List<SubscriptionEntity> findSubscriptionByBlogId(Long blogId) {
         return subscriptionRepository.findByBlogId(blogId);
+    }
+
+
+    public String getUserToken() {
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+
+        String token = request.getHeader("Authorization");
+
+        if (token != null && token.startsWith("Bearer ")) {
+            return token;
+        } else {
+            throw new TokenIsInvalidException("Authorization header is invalid");
+        }
+    }
+
+    public String getSubstringUserToken() {
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+
+        String token = request.getHeader("Authorization");
+
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+            return token;
+        } else {
+            throw new TokenIsInvalidException("Authorization header is invalid");
+        }
     }
 }

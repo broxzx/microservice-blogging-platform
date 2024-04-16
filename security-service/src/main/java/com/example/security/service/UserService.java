@@ -4,9 +4,11 @@ import com.example.security.dto.UserDtoResponse;
 import com.example.security.entity.UserEntity;
 import com.example.security.exception.UserNotFoundException;
 import com.example.security.repository.UserRepository;
+import com.example.security.utils.JwtTokenProvider;
 import com.example.security.utils.UserDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +22,9 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-//    private final BCryptPasswordEncoder encoder;
+    private final BCryptPasswordEncoder encoder;
 
-//    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private final UserDtoMapper userDtoMapper;
 
@@ -81,14 +83,21 @@ public class UserService {
     @Transactional
     @ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
     public UserDtoResponse getUserDtoResponseByJwtToken(String token) {
-//        String username = jwtTokenProvider.getUsername(token);
+        String username = null;
 
-//        UserEntity userEntity = userRepository.findByUsername(username)
-//                .orElseThrow(
-//                        () -> new UserNotFoundException("user with username '%s' was not found".formatted(username))
-//                );
+        try {
+            username = jwtTokenProvider.getUsernameByToken(token);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        return userDtoMapper.makeUserDtoResponse(null);
+        String finalUsername = username;
+        UserEntity userEntity = userRepository.findByUsername(username)
+                .orElseThrow(
+                        () -> new UserNotFoundException("user with username '%s' was not found".formatted(finalUsername))
+                );
+
+        return userDtoMapper.makeUserDtoResponse(userEntity);
     }
 
     /**

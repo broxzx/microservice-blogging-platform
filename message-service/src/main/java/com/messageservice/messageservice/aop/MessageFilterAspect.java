@@ -127,6 +127,8 @@ public class MessageFilterAspect {
 
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
+        System.out.println(token);
+
         if (token != null && token.startsWith("Bearer ")) {
             return token;
         } else {

@@ -3,6 +3,9 @@ package com.example.security.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.GrantedAuthority;
@@ -105,5 +108,22 @@ public class JwtTokenProvider {
                 .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(token);
+    }
+
+    /**
+     * Retrieves the username associated with the provided JWT token.
+     *
+     * @param token The JWT token.
+     * @return The username extracted from the token.
+     * @throws Exception If an error occurs while processing the token.
+     */
+    public String getUsernameByToken(String token) throws Exception {
+        JwtConsumer consumer = new JwtConsumerBuilder()
+                .setSkipAllValidators()
+                .setDisableRequireSignature()
+                .setSkipSignatureVerification()
+                .build();
+        JwtClaims claims = consumer.processToClaims(token);
+        return (String) claims.getClaimValue("preferred_username");
     }
 }

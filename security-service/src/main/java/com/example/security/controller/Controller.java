@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("security")
-@ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
+@ConditionalOnProperty(prefix = "security", name = "jwt.auth.enabled", matchIfMissing = false)
 public class Controller {
 
     private final UserService service;

@@ -42,8 +42,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return User
                 .builder()
                 .username(user.getUsername())
-//                .password(user.getPassword())
-//                .authorities(user.getRole().name())
+                .password(user.getEmail())
                 .build();
     }
 }

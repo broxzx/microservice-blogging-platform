@@ -35,6 +35,26 @@ spring:
           predicates:
             - Path=/messages/**
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8180/realms/microblogging-platform-microservice/protocol/openid-connect/certs
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8180/realms/microblogging-platform-microservice
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: microblogging-platform-microservice
+            client-secret: ChnrHmK9xg8G7yTlK0t3gy2NlcmPE425
+            scope:
+              - openid
+              - view
+              - edit
+              - microprofile-jwt
+
 #jwt-security
 jwt:
   token: 7e17e9833023788f29093965b2cc80a73294257ba5f7965edf2ebbd56021bf6d

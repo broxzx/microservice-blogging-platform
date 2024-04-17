@@ -17,4 +17,6 @@ public interface MessageRepository extends MongoRepository<MessageEntity, Long> 
      * @return a list of MessageEntity objects
      */
     List<MessageEntity> findByBlogId(String blogId);
+
+    void deleteByBlogId(String blogId);
 }

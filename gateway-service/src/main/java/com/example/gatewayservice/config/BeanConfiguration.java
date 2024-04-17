@@ -33,6 +33,7 @@ public class BeanConfiguration {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(authorizeExchange -> authorizeExchange
+                        .pathMatchers("/swagger-ui/**").hasRole("ADMIN")
                         .anyExchange().authenticated())
                 .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()))
                 .oauth2Login(Customizer.withDefaults())

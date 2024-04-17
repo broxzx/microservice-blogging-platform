@@ -3,6 +3,7 @@ package com.example.blogservice.controller;
 import com.example.blogservice.dto.BlogRequestDto;
 import com.example.blogservice.dto.BlogResponseDto;
 import com.example.blogservice.entity.BlogEntity;
+import com.example.blogservice.producer.RabbitMQProducer;
 import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.SequenceGeneratorService;
 import com.example.blogservice.service.UserService;
@@ -31,6 +32,8 @@ public class BlogController {
     private final BlogService blogService;
 
     private final UserService userService;
+
+    private final RabbitMQProducer rabbitMQProducer;
 
     private static final String SEQUENCE_NAME = "blog_sequence";
     private static final String GET_ALL_BLOGS = "/";
@@ -137,6 +140,8 @@ public class BlogController {
         BlogEntity foundBlogEntity = blogService.findById(id);
 
         blogService.deleteById(id);
+
+        rabbitMQProducer.sendToDeleteMessage(String.valueOf(id));
 
         BlogResponseDto response = blogResponseDtoFactory.makeBlogResponseDto(foundBlogEntity);
 

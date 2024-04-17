@@ -79,4 +79,14 @@ public class MessageService {
     public void updateMessageEntity(MessageEntity message, MessageRequestDto request) {
         message.setContent(request.getContent());
     }
+
+    /**
+     * Deletes message entities by blogId.
+     * This method deletes all message entities associated with a specific blog identified by its blogId.
+     *
+     * @param blogId The ID of the blog.
+     */
+    public void deleteMessageEntityByBlogId(String blogId) {
+        messageRepository.deleteByBlogId(blogId);
+    }
 }

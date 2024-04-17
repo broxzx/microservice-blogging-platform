@@ -4,7 +4,15 @@ server:
 
 #spring
 spring:
+  rabbitmq:
+    username: user
+    password: password
   application:
     name: blog-service
   config:
     import: "optional:configserver:http://localhost:8888"
+
+rabbitmq:
+  queue-delete-blog: queue-delete-blog
+  routing-key-delete-blog: blog-by-id.delete
+  exchange-delete-blog: exchange-delete-blog

@@ -2,8 +2,6 @@
 server:
   port: 8080
 
-jwt:
-  enabled: false
 
 #spring
 spring:

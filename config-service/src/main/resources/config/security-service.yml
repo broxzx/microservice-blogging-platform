@@ -15,6 +15,11 @@ spring:
       - public
       - users
 
+security:
+  jwt:
+    enabled: true
+    auth:
+      enabled: false
 
 #jwt-token
 jwt:

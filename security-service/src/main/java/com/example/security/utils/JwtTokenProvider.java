@@ -1,8 +1,7 @@
 package com.example.security.utils;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
@@ -12,6 +11,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ import java.util.List;
  * It uses a secret key and a duration to generate the tokens.
  */
 @Component
-@ConditionalOnProperty(prefix = "security", name = "jwt.enabled", matchIfMissing = false)
+@ConditionalOnProperty(prefix = "security", name = "jwt.enabled")
 public class JwtTokenProvider {
 
     @Value("${jwt.token}")
@@ -56,59 +57,10 @@ public class JwtTokenProvider {
                 .claims(claims)
                 .issuedAt(issuedAt)
                 .expiration(expiresAt)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(getSecretKey())
                 .compact();
     }
 
-    /**
-     * Retrieves the claims from the JWT token.
-     *
-     * @param token The JWT token
-     * @return The claims from the JWT token
-     */
-    public Claims getAllClaims(String token) {
-        return Jwts
-                .parser()
-                .setSigningKey(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-    }
-
-    /**
-     * Retrieves the username from the JWT token.
-     *
-     * @param token The JWT token
-     * @return The username retrieved from the JWT token
-     */
-    public String getUsername(String token) {
-        return getAllClaims(token)
-                .getSubject();
-    }
-
-    /**
-     * Retrieves the roles from the JWT token.
-     *
-     * @param token The JWT token
-     * @return A list of roles retrieved from the JWT token
-     */
-    public List<String> getRoles(String token) {
-        return getAllClaims(token)
-                .get("roles", List.class);
-    }
-
-    /**
-     * Validates a JWT token.
-     *
-     * @param token The JWT token to be validated
-     */
-    public void validate(String token) {
-        Jwts
-                .parser()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token);
-    }
 
     /**
      * Retrieves the username associated with the provided JWT token.
@@ -125,5 +77,9 @@ public class JwtTokenProvider {
                 .build();
         JwtClaims claims = consumer.processToClaims(token);
         return (String) claims.getClaimValue("preferred_username");
+    }
+
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 }

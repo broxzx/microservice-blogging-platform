@@ -2,17 +2,23 @@ package com.example.gatewayservice.jwtUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * The JwtUtils class provides methods for validating JSON Web Tokens (JWTs) and extracting information from them.
  */
 @Component
-@ConditionalOnProperty(prefix = "jwt", name = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "jwt", name = "enabled")
 public class JwtUtils {
 
     @Value("${jwt.token}")
@@ -26,9 +32,9 @@ public class JwtUtils {
     public void validate(String token) {
         Jwts
                 .parser()
-                .setSigningKey(secretKey)
+                .verifyWith(getSecretKey())
                 .build()
-                .parseClaimsJws(token);
+                .parseSignedClaims(token);
     }
 
     /**
@@ -40,9 +46,9 @@ public class JwtUtils {
     private Claims getAllClaims(String token) {
         return Jwts
                 .parser()
-                .setSigningKey(secretKey)
+                .verifyWith(getSecretKey())
                 .build()
-                .parseClaimsJws(token)
+                .parseSignedClaims(token)
                 .getPayload();
     }
 
@@ -53,7 +59,19 @@ public class JwtUtils {
      * @return The roles extracted from the JWT.
      */
     public List<String> getJwtRoles(String token) {
-        return getAllClaims(token)
-                .get("roles", List.class);
+        List<?> list = getAllClaims(token).get("roles", List.class);
+
+        if (list != null) {
+            return list.stream()
+                    .filter(Objects::nonNull)
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
+        }
+
+        return new ArrayList<>();
+    }
+
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 }

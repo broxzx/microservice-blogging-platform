@@ -1,6 +1,8 @@
 package com.example.blogservice.controller;
 
 import com.example.blogservice.model.MessageModelResponse;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,8 @@ public class BlogMessagesController {
      * @param blogId The ID of the blog to retrieve messages for.
      * @return ResponseEntity<MessageModelResponse[]> A response entity containing an array of message models.
      */
+    @CircuitBreaker(name = "blog")
+    @Retry(name = "blog")
     @GetMapping(GET_ALL_MESSAGES_BY_ID)
     public ResponseEntity<MessageModelResponse[]> getAllMessagesByBlogId(@PathVariable Long blogId) {
         Span messageEntityLookUp = tracer.nextSpan().name("Message Entity LookUp");

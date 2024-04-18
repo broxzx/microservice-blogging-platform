@@ -6,6 +6,8 @@ import com.example.blogservice.exception.AccessDeniedException;
 import com.example.blogservice.model.UserModelResponse;
 import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.UserService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -125,6 +127,8 @@ public class BlogFilterAspect {
      *
      * @return The response containing the user information.
      */
+    @CircuitBreaker(name = "blog")
+    @Retry(name = "blog")
     private UserModelResponse getUserByToken() {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 

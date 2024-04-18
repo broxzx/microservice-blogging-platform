@@ -8,9 +8,12 @@ import com.example.blogservice.service.BlogService;
 import com.example.blogservice.service.SequenceGeneratorService;
 import com.example.blogservice.service.UserService;
 import com.example.blogservice.utils.BlogResponseDtoFactory;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,8 +50,8 @@ public class BlogController {
      * Retrieves all blogs from the system.
      *
      * @return A ResponseEntity object containing the list of BlogResponseDto objects.
-     *         The response has a status code of 200 (OK) if the blogs are successfully retrieved.
-     *         Otherwise, an error response is returned.
+     * The response has a status code of 200 (OK) if the blogs are successfully retrieved.
+     * Otherwise, an error response is returned.
      */
     @GetMapping(GET_ALL_BLOGS)
     public ResponseEntity<List<BlogResponseDto>> getAllBlogs() {
@@ -84,10 +87,12 @@ public class BlogController {
      * Creates a new blog.
      *
      * @param blogRequest the object representing the blog to be created
-     * @param token the authorization token
+     * @param token       the authorization token
      * @return the response entity containing the created blog
      */
     @PostMapping(CREATE_BLOG)
+    @CircuitBreaker(name = "blog", fallbackMethod = "blogFallbackMethod")
+    @Retry(name = "blog")
     public ResponseEntity<BlogResponseDto> createBlog(@RequestBody BlogRequestDto blogRequest, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         token = userService.verifyToken(token);
 
@@ -109,10 +114,29 @@ public class BlogController {
     }
 
     /**
+     * Fallback method for creating a blog. It is called when there is an exception during the creation process.
+     *
+     * @param blogRequest the request object containing the details of the blog to be created
+     * @param token       the authorization token provided in the request header
+     * @param e           the exception that occurred while creating the blog
+     * @return the response entity with an error message indicating that the blog creation is unavailable at the moment
+     */
+    public ResponseEntity<BlogResponseDto> blogFallbackMethod(@RequestBody BlogRequestDto blogRequest, @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                              RuntimeException e) {
+        BlogResponseDto response = BlogResponseDto.builder()
+                .description("Unable to create blog at this time. Please try again later.")
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(response);
+    }
+
+    /**
      * Updates a blog entity with the provided blog request data.
      *
-     * @param id           The ID of the blog entity to update.
-     * @param blogRequest  The blog request data to update the entity.
+     * @param id          The ID of the blog entity to update.
+     * @param blogRequest The blog request data to update the entity.
      * @return The updated blog response DTO wrapped in a ResponseEntity.
      */
     @PutMapping(UPDATE_BLOG_BY_ID)

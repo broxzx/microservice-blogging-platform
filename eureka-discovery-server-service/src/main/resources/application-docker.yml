@@ -6,15 +6,13 @@ server:
 spring:
   application:
     name: eureka-discovery-server
-#  config:
-#    import: "optional:configserver:http://localhost:8888"
 #eureka
 eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-discovery-server-service:8761/eureka
 
 #logging
 logging:
@@ -37,3 +35,6 @@ management:
       show-details: always
     info:
       enabled: true
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans

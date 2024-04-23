@@ -5,6 +5,7 @@ import com.messageservice.messageservice.model.UserModelResponse;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -23,6 +24,9 @@ public class UserService {
 
     private final Tracer tracer;
 
+    @Value("${host.name}")
+    private String host;
+
     /**
      * Retrieves the user model by the provided token.
      *
@@ -38,12 +42,12 @@ public class UserService {
             if (token != null && token.startsWith("Bearer ")) {
                 userToken = token.substring(7);
             } else {
-                throw new TokenIsInvalidException("token is either absent or invalid. please login by using 'http://localhost:8080/security/login'");
+                throw new TokenIsInvalidException("token is either absent or invalid. please login by using 'http://%s:8080/security/login'".formatted(host));
             }
 
             return webClient
                     .get()
-                    .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
+                    .uri("http://%s:8080/user/by-jwt-token".formatted(host), uriBuilder -> uriBuilder
                             .queryParam("token", userToken)
                             .build())
                     .header(HttpHeaders.AUTHORIZATION, token)

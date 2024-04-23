@@ -1,19 +1,8 @@
-server:
-  port: 0
-
+#spring
 spring:
-  application:
-    name: security-service
-  config:
-    import: "optional:configserver:http://localhost:8888"
-  flyway:
-    enabled: false
-    schemas:
-      - public
-      - users
   #database
   datasource:
-    url: jdbc:postgresql://localhost:9123/pdb
+    url: jdbc:postgresql://postgres-keycloak:5432/pdb
     username: admin
     password: admin
     driver-class-name: org.postgresql.Driver
@@ -21,6 +10,10 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+  flyway:
+    schemas:
+      - public
+      - users
 
 security:
   jwt:
@@ -54,8 +47,11 @@ management:
       show-details: always
     info:
       enabled: true
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-discovery-server-service:8761/eureka

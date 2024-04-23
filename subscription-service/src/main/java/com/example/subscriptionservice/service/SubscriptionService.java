@@ -14,6 +14,7 @@ import io.micrometer.tracing.Tracer;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -43,6 +44,9 @@ public class SubscriptionService {
     private final WebClient webClient;
 
     private final Tracer tracer;
+
+    @Value("${host.name}")
+    private String host;
 
     private static final String SEQUENCE_NAME = "subscription_sequence";
 
@@ -224,7 +228,7 @@ public class SubscriptionService {
         try (Tracer.SpanInScope ignored = tracer.withSpan(userEntityLookUp.start())) {
             userModelResponse = webClient
                     .get()
-                    .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
+                    .uri("http://%s:8080/user/by-jwt-token".formatted(host), uriBuilder -> uriBuilder
                             .queryParam("token", getSubstringUserToken()).build())
                     .header(HttpHeaders.AUTHORIZATION, getUserToken())
                     .retrieve()

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,9 @@ public class MessageFilterAspect {
     private final MessageService messageService;
 
     private final WebClient webClient;
+
+    @Value("${host.name}")
+    private String host;
 
     /**
      * Checks access to delete a message entity by ID.
@@ -105,7 +109,7 @@ public class MessageFilterAspect {
 
         UserModelResponse response = webClient
                 .get()
-                .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
+                .uri("http://%s:8080/user/by-jwt-token".formatted(host), uriBuilder -> uriBuilder
                         .queryParam("token", userToken)
                         .build())
                 .header(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
@@ -145,7 +149,7 @@ public class MessageFilterAspect {
     private BlogModelResponse getBlogModelResponseById(String id) {
         BlogModelResponse response = webClient
                 .get()
-                .uri("http://localhost:8080/blog/{id}", id)
+                .uri("http://%s:8080/blog/{id}".formatted(host), id)
                 .header(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
                 .retrieve()
                 .bodyToMono(BlogModelResponse.class)

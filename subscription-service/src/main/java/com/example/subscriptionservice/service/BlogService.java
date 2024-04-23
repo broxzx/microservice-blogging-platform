@@ -7,6 +7,7 @@ import io.micrometer.tracing.Tracer;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -28,6 +29,9 @@ public class BlogService {
 
     private final Tracer tracer;
 
+    @Value("${host.name}")
+    private String host;
+
     /**
      * Retrieves a BlogModelResponse from a blog API by its ID.
      *
@@ -40,7 +44,7 @@ public class BlogService {
         try (Tracer.SpanInScope ignored = tracer.withSpan(blogEntityLookUp.start())) {
             BlogModelResponse blogModelResponse = webClient
                     .get()
-                    .uri("http://localhost:8080/blog/{id}", blogId)
+                    .uri("http://%s:8080/blog/{id}".formatted(host), blogId)
                     .header(HttpHeaders.AUTHORIZATION, getUserToken())
                     .retrieve()
                     .bodyToMono(BlogModelResponse.class)

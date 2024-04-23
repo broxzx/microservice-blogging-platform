@@ -7,6 +7,7 @@ import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -24,6 +25,9 @@ public class UserService {
     private final JwtTokenUtils jwtTokenUtils;
 
     private final Tracer tracer;
+
+    @Value("${host.name}")
+    private String host;
 
     /**
      * Finds the user ID associated with the given JWT token.
@@ -60,7 +64,7 @@ public class UserService {
 
             return webClient
                     .get()
-                    .uri("http://localhost:8080/user/by-jwt-token", uriBuilder -> uriBuilder
+                    .uri("http://%s:8080/user/by-jwt-token".formatted(host), uriBuilder -> uriBuilder
                             .queryParam("token", token)
                             .build())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)

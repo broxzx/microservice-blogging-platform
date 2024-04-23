@@ -7,6 +7,8 @@ services:
       - "5449:5432"
     expose:
       - "5449"
+    networks:
+      - backend
     volumes:
       - postgres_user_service:/data/db
     environment:
@@ -20,6 +22,8 @@ services:
     image: mongo:latest
     ports:
       - "27019:27017"
+    networks:
+      - backend
     volumes:
       - mongodb_subscription_service:/data/db
     environment:
@@ -37,6 +41,8 @@ services:
       - mongodb_blog_service:/data/db
     environment:
       MONGO_INITDB_DATABASE: blog-service
+    networks:
+      - backend
     expose:
       - "27018"
     restart: unless-stopped
@@ -46,6 +52,8 @@ services:
     image: mongo:latest
     ports:
       - "27020:27017"
+    networks:
+      - backend
     volumes:
       - mongodb_message_service:/data/db
     environment:
@@ -60,6 +68,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
+    networks:
+      - backend
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -70,6 +80,8 @@ services:
     container_name: zipkin
     environment:
       - STORAGE_TYPE=mem
+    networks:
+      - backend
     ports:
       - "9411:9411"
     restart: unless-stopped
@@ -82,19 +94,23 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: pdb
+    networks:
+      - backend
     ports:
       - "9123:5432"
     volumes:
       - postgres_keycloak_db:/data/db
 
 
-  keycloak:
+  keycloak-blogging:
     image: quay.io/keycloak/keycloak:24.0.2
     container_name: keycloak-blogging
     restart: unless-stopped
     command: [ "start-dev", "--import-realm" ]
     ports:
       - "8180:8080"
+    networks:
+      - backend
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
@@ -107,6 +123,113 @@ services:
     volumes:
       - ./realms/:/opt/keycloak/data/import/
 
+  eureka-discovery-server-service:
+    image: eureka-discovery-server-service
+    container_name: eureka-discovery-server-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - backend
+    ports:
+      - "8761:8761"
+    depends_on:
+      - zipkin
+
+  gateway-service:
+    image: gateway-service
+    container_name: gateway-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - keycloak-blogging
+      - zipkin
+      - eureka-discovery-server-service
+
+  blog-service:
+    image: blog-service
+    container_name: blog-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - backend
+    ports:
+      - "0:0"
+    depends_on:
+      - mongodb-blog
+      - gateway-service
+      - eureka-discovery-server-service
+      - zipkin
+      - rabbitmq
+
+  security-service:
+    image: security-service
+    container_name: security-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - backend
+    ports:
+      - "0:0"
+    depends_on:
+      - eureka-discovery-server-service
+      - zipkin
+      - gateway-service
+      - postgres-keycloak
+
+  subscription-service:
+    image: subscription-service
+    container_name: subscription-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - backend
+    ports:
+      - "0:0"
+    depends_on:
+      - zipkin
+      - gateway-service
+      - eureka-discovery-server-service
+      - rabbitmq
+      - mongodb-subscription
+
+  message-service:
+    image: message-service
+    container_name: message-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "0:0"
+    networks:
+      - backend
+    depends_on:
+      - zipkin
+      - eureka-discovery-server-service
+      - gateway-service
+      - mongodb-message
+      - rabbitmq
+
+  notification-service:
+    image: notification-service
+    container_name: notification-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "0:0"
+    networks:
+      - backend
+    depends_on:
+      - eureka-discovery-server-service
+      - gateway-service
+      - zipkin
+      - rabbitmq
+
+networks:
+  backend:
+    driver: bridge
 
 volumes:
   postgres_user_service:

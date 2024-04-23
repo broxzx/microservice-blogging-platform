@@ -1,40 +1,4 @@
-#server
-server:
-  port: 8761
-
 #spring
 spring:
-  application:
-    name: eureka-discovery-server
-#eureka
-eureka:
-  client:
-    register-with-eureka: false
-    fetch-registry: false
-    service-url:
-      defaultZone: http://eureka-discovery-server-service:8761/eureka
-
-#logging
-logging:
-  level:
-    root: info
-    web: info
-    sql: info
-
-#actuator
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: always
-    info:
-      enabled: true
-  zipkin:
-    tracing:
-      endpoint: http://zipkin:9411/api/v2/spans
+  config:
+    import: "optional:configserver:http://config-service:8888"

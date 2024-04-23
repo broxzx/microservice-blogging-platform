@@ -1,30 +1,30 @@
+
+#spring
+spring:
+  rabbitmq:
+    username: user
+    password: password
+    host: rabbitmq
+  data:
+    mongodb:
+      host: mongodb-blog
+      port: 27017
+      database: blog-service
+
 #cloud
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-discovery-server-service:8761/eureka
 
 #logging
 logging:
   level:
-    root: info
-    web: info
-    sql: info
-#  pattern:
-#    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
-
-#spring
-spring:
-  # rabbit
-  rabbitmq:
-    username: user
-    password: password
-  #db
-  data:
-    mongodb:
-      host: localhost
-      port: 27018
-      database: blog-service
+    root: trace
+    web: trace
+    sql: trace
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
 
 rabbitmq:
   queue-delete-blog: queue-delete-blog
@@ -57,7 +57,7 @@ resilience4j:
           seconds: 5
 
 host:
-  name: localhost
+  name: gateway-service
 
 #actuator
 management:
@@ -76,3 +76,6 @@ management:
       show-details: always
     info:
       enabled: true
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans

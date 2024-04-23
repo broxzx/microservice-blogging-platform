@@ -6,34 +6,5 @@ server:
 spring:
   application:
     name: eureka-discovery-server
-#  config:
-#    import: "optional:configserver:http://localhost:8888"
-#eureka
-eureka:
-  client:
-    register-with-eureka: false
-    fetch-registry: false
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
-#logging
-logging:
-  level:
-    root: info
-    web: info
-    sql: info
-
-#actuator
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: always
-    info:
-      enabled: true
+  config:
+    import: "optional:configserver:http://localhost:8888"

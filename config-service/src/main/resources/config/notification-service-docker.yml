@@ -1,13 +1,21 @@
-#mongo
 spring:
-  data:
-    mongodb:
-      host: localhost
-      port: 27019
-      database: subscription-service
   rabbitmq:
     username: user
     password: password
+    host: rabbitmq-notification-service
+  mail:
+    activated: false
+    sender: example@gmail.com
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+        starttls:
+          enable: true
 
 #rabbit-variables
 rabbitmq:
@@ -23,17 +31,17 @@ rabbitmq:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-discovery-server-service:8761/eureka
 
 #logging
 logging:
   level:
-    root: info
-    web: info
-    sql: info
+    root: trace
+    web: trace
+    sql: trace
 
 host:
-  name: localhost
+  name: gateway-service
 
 #actuator
 management:
@@ -49,3 +57,6 @@ management:
       show-details: always
     info:
       enabled: true
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans

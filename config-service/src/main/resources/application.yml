@@ -3,9 +3,6 @@ server:
 
 spring:
   profiles:
-    #docker
-    active: native,docker
-    #native
-#    active: native
+    active: native
   application:
     name: config-service

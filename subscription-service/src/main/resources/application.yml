@@ -6,54 +6,5 @@ server:
 spring:
   application:
     name: subscription-service
-  #  config:
-  #    import: "optional:configserver:http://localhost:8888"
-  data:
-    mongodb:
-      host: localhost
-      port: 27019
-      database: subscription-service
-  rabbitmq:
-    username: user
-    password: password
-
-#rabbit-variables
-rabbitmq:
-  queue-subscriber: notifications-queue-subscriber
-  routing-key-subscriber: notifications-subscriber.push-subscriber
-  exchange-subscriber: notifications-exchange-subscriber
-
-  routing-key-owner: notifications-owner.push
-  queue-owner: notifications-queue-owner
-  exchange-owner: notifications-exchange-owner
-
-#eureka
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
-#logging
-logging:
-  level:
-    root: info
-    web: info
-    sql: info
-
-host:
-  name: localhost
-
-#actuator
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: always
-    info:
-      enabled: true
+  config:
+    import: "optional:configserver:http://localhost:8888"

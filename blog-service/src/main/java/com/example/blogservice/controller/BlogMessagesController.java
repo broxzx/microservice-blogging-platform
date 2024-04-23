@@ -6,6 +6,7 @@ import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,9 @@ public class BlogMessagesController {
 
     private static final String GET_ALL_MESSAGES_BY_ID = "/";
 
+    @Value("${host.name}")
+    private String host;
+
     /**
      * Retrieves all messages by blog ID.
      *
@@ -46,7 +50,7 @@ public class BlogMessagesController {
         try (Tracer.SpanInScope ignored = tracer.withSpan(messageEntityLookUp.start())) {
             MessageModelResponse[] response = webClient
                     .get()
-                    .uri("http://localhost:8080/messages/blog/{blogId}", blogId)
+                    .uri("http://%s:8080/messages/blog/{blogId}".formatted(host), blogId)
                     .retrieve()
                     .bodyToMono(MessageModelResponse[].class)
                     .subscribeOn(Schedulers.boundedElastic())

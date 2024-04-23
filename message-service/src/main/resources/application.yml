@@ -2,50 +2,7 @@ server:
   port: 0
 
 spring:
-  rabbitmq:
-    username: user
-    password: password
   application:
     name: message-service
-  #  config:
-  #    import: "optional:configserver:http://localhost:8888/"
-  data:
-    mongodb:
-      host: localhost
-      port: 27020
-      database: message-service
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
-rabbitmq:
-  queue-delete-blog: queue-delete-blog
-  routing-key-delete-blog: blog-by-id.delete
-  exchange-delete-blog: exchange-delete-blog
-
-#logging
-logging:
-  level:
-    root: info
-    web: info
-    sql: info
-
-host:
-  name: localhost
-
-#actuator
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: always
-    info:
-      enabled: true
+  config:
+    import: "optional:configserver:http://localhost:8888/"
